@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  background: rgb(0, 0, 0);
+}
+
+body {
+  margin: 0;
+  font-family: "Switzer", sans-serif;
+  background: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
+  -webkit-font-smoothing: antialiased;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
