@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const menuLinks = [
   { label: "Works", to: "/" },
@@ -22,17 +23,29 @@ export default function Header({
   onMenuClose,
 }: HeaderProps) {
   const isDetailPage = typeof scrollPercent === "number";
+  const { lang, toggleLang } = useLanguage();
+  const langToggleLabel = lang === "en" ? "中文" : "EN";
 
   return (
     <nav
       className="fixed top-2 left-0 right-0 z-50 w-full py-5"
       data-framer-name={isMenuOpen ? "Freelance - Open" : "Freelance Closed"}
     >
-      <a href="/" className="absolute left-5 top-1 h-10 inline-block">
-        <span className="text-white text-xs md:text-sm font-semibold opacity-90 leading-none">
-          SHAO Linzhengrong
-        </span>
-      </a>
+      <div className="absolute left-5 top-1 h-10 inline-flex items-baseline">
+        <a href="/" className="inline-block">
+          <span className="text-white text-xs md:text-sm font-semibold opacity-90 leading-none">
+            SHAO Linzhengrong
+          </span>
+        </a>
+        <button
+          type="button"
+          onClick={toggleLang}
+          className="text-white text-xs md:text-sm font-semibold leading-none transition-opacity whitespace-nowrap py-0 pl-2 pr-1"
+          aria-label={`Switch language to ${langToggleLabel}`}
+        >
+          {langToggleLabel}
+        </button>
+      </div>
       {/* 大屏：中间 Menu + 内联链接 */}
       <div className="absolute top-1 h-10 left-[800px] hidden min-[1350px]:flex flex-row items-baseline gap-px px-5">
         <div className="shrink-0 w-[3.25rem] text-left leading-none">

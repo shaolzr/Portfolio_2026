@@ -2,6 +2,7 @@ import { BrowserRouter, useLocation, matchPath, Routes, Route } from "react-rout
 import { AnimatePresence, motion } from "framer-motion";
 import HomePage from "./pages/HomePage";
 import CaseStudyPage from "./pages/CaseStudyPage";
+import { LanguageProvider } from "./i18n/LanguageContext";
 
 // 从 Framer 源码提取的全局页面切换参数
 const pageTransition = {
@@ -44,11 +45,13 @@ function AnimatedRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="*" element={<AnimatedRoutes />} />
-      </Routes>
-    </BrowserRouter>
+    <LanguageProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="*" element={<AnimatedRoutes />} />
+        </Routes>
+      </BrowserRouter>
+    </LanguageProvider>
   );
 }
 

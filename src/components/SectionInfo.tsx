@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { useLanguage } from "../i18n/LanguageContext";
+import { sectionInfoMessages } from "../i18n/sectionInfoMessages";
 
 function Line() {
   return <div className="h-px w-full bg-white/20" />;
@@ -26,13 +28,13 @@ function InfoRow({
   const Wrapper = variants ? motion.div : "div";
   const wrapperProps = variants ? { variants } : {};
   return (
-    <Wrapper className="flex flex-col gap-2" {...wrapperProps}>
+    <Wrapper className="flex flex-col gap-0" {...wrapperProps}>
       <Line />
-      <div className="flex flex-col gap-1 py-2">
-        <span className="text-white/60 text-sm uppercase tracking-wider">
+      <div className="flex flex-row gap-8 pt-2 pb-8 items-start">
+        <span className="text-white/60 text-sm uppercase tracking-wider shrink-0 w-20 min-[1350px]:w-24">
           {label}
         </span>
-        <div className="text-white text-base">{children}</div>
+        <div className="text-white text-sm font-semibold text-left min-w-0 flex-1">{children}</div>
       </div>
     </Wrapper>
   );
@@ -47,33 +49,28 @@ const sectionContainer = {
 };
 
 export default function SectionInfo() {
+  const { lang } = useLanguage();
+  const msg = sectionInfoMessages[lang];
   return (
-    <section id="info" className="px-5 md:px-10 py-12 md:py-16">
+    <section id="info" className="pl-5 pr-5 md:pr-10 min-[1350px]:pl-[830px] py-12 md:py-16">
       <motion.div
-        className="max-w-4xl space-y-0"
+        className="max-w-4xl space-y-0 text-left ml-auto"
         variants={sectionContainer}
         initial="hidden"
         animate="visible"
       >
-        <InfoRow label="Client" variants={rowVariants}>
-          <span>QQ SPEED</span>
+        <InfoRow label={msg.labels.client} variants={rowVariants}>
+          <span>{msg.values.client}</span>
         </InfoRow>
-        <InfoRow label="Type" variants={rowVariants}>
-          <span>Game, AI Agent, AI Product</span>
+        <InfoRow label={msg.labels.type} variants={rowVariants}>
+          <span>{msg.values.type}</span>
         </InfoRow>
-        <InfoRow label="Year" variants={rowVariants}>
-          <span>2025</span>
+        <InfoRow label={msg.labels.year} variants={rowVariants}>
+          <span>{msg.values.year}</span>
         </InfoRow>
-        <InfoRow label="About" variants={rowVariants}>
-          <p className="text-white/90 leading-relaxed max-w-2xl">
-            I am Luca Derene, a Digital Designer & Art Director based in Toronto,
-            Canada. With more than 10 years of experience in digital design and
-            print for national and international clients such as Balenciaga,
-            Sensa, Apex Films and Filippo Monelli. Currently working at Basic as
-            Creative Director. Their innovative approach and personalized
-            solutions have helped clients achieve remarkable growth and
-            establish a strong market presence. Curiously working at Basic as
-            Creative Director.
+        <InfoRow label={msg.labels.about} variants={rowVariants}>
+          <p className="text-white leading-relaxed max-w-2xl">
+            {msg.values.about}
           </p>
         </InfoRow>
       </motion.div>

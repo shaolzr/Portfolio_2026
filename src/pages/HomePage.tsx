@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Header from "../components/Header";
 import HomeHero from "../components/HomeHero";
@@ -8,8 +8,14 @@ import SectionJournal from "../components/SectionJournal";
 import Footer from "../components/Footer";
 import MenuOverlay from "../components/MenuOverlay";
 
+const SITE_TITLE = "SHAO Linzhengrong";
+
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = SITE_TITLE;
+  }, []);
 
   return (
     <>
