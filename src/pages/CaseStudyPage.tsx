@@ -33,6 +33,8 @@ function SystemDesignVideo({
   const [isInView, setIsInView] = useState(false);
   const [userPaused, setUserPaused] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  /** 视频宽高比，用于包裹「视频+按钮」的容器，使按钮始终在视频画面右下角内 */
+  const [videoAspect, setVideoAspect] = useState<number | null>(null);
 
   const isPlaying = isInView && !userPaused;
 
@@ -67,21 +69,30 @@ function SystemDesignVideo({
   return (
     <div
       ref={containerRef}
-      className="relative border border-white/0 flex flex-col items-end w-full h-full max-h-[90vh] min-h-0"
+      className="relative border border-white/0 flex flex-col items-end justify-center w-full h-full max-h-[90vh] min-h-0"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      <video
-        ref={videoRef}
-        src={src}
-        className="w-full h-full min-h-0 max-h-[90vh] object-contain object-top block"
-        loop
-        muted={isMuted}
-        playsInline
-        aria-label={ui.video.systemDesignAria}
-      />
-      {isHovering && (
-        <div className="absolute bottom-3 right-3 flex items-center gap-2 rounded-lg bg-black/70 px-2 py-1.5">
+      {/* 按视频真实宽高比包裹，使暂停/静音按钮始终在视频画面右下角内 */}
+      <div
+        className="relative w-full max-h-full min-h-0 shrink-0"
+        style={{ aspectRatio: videoAspect != null ? String(videoAspect) : "16/9" }}
+      >
+        <video
+          ref={videoRef}
+          src={src}
+          onLoadedMetadata={(e) => {
+            const v = e.currentTarget;
+            if (v.videoWidth && v.videoHeight) setVideoAspect(v.videoWidth / v.videoHeight);
+          }}
+          className="absolute inset-0 w-full h-full object-contain object-top object-right block"
+          loop
+          muted={isMuted}
+          playsInline
+          aria-label={ui.video.systemDesignAria}
+        />
+        {isHovering && (
+          <div className="absolute bottom-3 right-3 flex items-center gap-2 rounded-lg bg-black/70 px-2 py-1.5">
           <button
             type="button"
             onClick={() => setUserPaused((p) => !p)}
@@ -107,7 +118,8 @@ function SystemDesignVideo({
             )}
           </button>
         </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -671,7 +683,7 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                       className="w-full max-w-full h-auto block"
                       aria-hidden
                     />
-                    {/* 每块：左侧无 max-height 随内容增高，右侧固定 90vh 且 sticky；左侧超出时整行变高，右侧吸顶、左侧随页滚动 */}
+                    {/* 每块：左侧无 max-height 随内容增高，右侧固定 90vh 且 sticky；视频右缘与 header 最右文字对齐（由 article pr-5 保证，不撑宽页面） */}
                     {[0, 2, 4].map((startIdx) => (
                       <div key={startIdx} className="flex flex-row items-start gap-8 md:gap-10 overflow-visible">
                         <div className="min-w-0 flex-1 max-w-[50%] flex flex-col min-h-[90vh] overflow-visible">
@@ -720,7 +732,8 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                             </div>
                           )}
                         </div>
-                        <div className="flex-1 min-w-0 flex flex-col items-end self-start max-w-[50vw] h-[90vh] max-h-[90vh] sticky top-20">
+                        {/* 右列铺满至内容区右边缘，与 header 右缘（pr-5）对齐；视频在列内右对齐 */}
+                        <div className="flex-1 min-w-0 flex flex-col items-end self-start h-[90vh] max-h-[90vh] sticky top-20">
                           <SystemDesignVideo
                             src={startIdx === 0 ? MOTION_VIDEO_URL : startIdx === 2 ? FREE_CHAT_VIDEO_URL : LONG_TERM_MEMORY_VIDEO_URL}
                             isMuted={allVideosMuted}
