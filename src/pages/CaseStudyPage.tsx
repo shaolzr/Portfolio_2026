@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import SectionInfo from "../components/SectionInfo";
@@ -78,7 +78,7 @@ function SystemDesignVideo({
         className="relative w-full max-h-full min-h-0 shrink-0"
         style={{ aspectRatio: videoAspect != null ? String(videoAspect) : "16/9" }}
       >
-        <video
+        <motion.video
           ref={videoRef}
           src={src}
           onLoadedMetadata={(e) => {
@@ -86,6 +86,10 @@ function SystemDesignVideo({
             if (v.videoWidth && v.videoHeight) setVideoAspect(v.videoWidth / v.videoHeight);
           }}
           className="absolute inset-0 w-full h-full object-contain object-top object-right block"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ amount: 0.5, once: false }}
+          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           loop
           muted={isMuted}
           playsInline
@@ -361,71 +365,85 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
       />
       <MenuOverlay isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       {/* Results 与 Reflection 之间全屏视频滑道：仅 header 保留，左侧目录隐藏，视频左右铺满，左下角 Scroll to Continue、右下角暂停/静音 */}
-      {videoOverlayActive && (
-        <div
-          className="fixed left-0 right-0 bottom-0 top-0 z-40 bg-black flex items-center justify-center"
-          aria-hidden
-          onMouseEnter={() => setFullscreenVideoHover(true)}
-          onMouseLeave={() => setFullscreenVideoHover(false)}
-        >
-          <video
-            ref={fullscreenVideoRef}
-            src={MIRACLE_CG_VIDEO_URL}
-            className="absolute inset-0 w-full h-full object-cover"
-            loop
-            muted={allVideosMuted}
-            playsInline
-            aria-label={msg.ui.video.miracleCgAria}
-          />
-          <motion.p
-            className="absolute left-6 bottom-8 md:left-10 md:bottom-12 text-white text-sm md:text-base font-semibold tracking-wide z-10"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{
-              duration: 2.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+      <AnimatePresence>
+        {videoOverlayActive && (
+          <motion.div
+            className="fixed left-0 right-0 bottom-0 top-0 z-40 bg-black flex items-center justify-center"
+            aria-hidden
+            onMouseEnter={() => setFullscreenVideoHover(true)}
+            onMouseLeave={() => setFullscreenVideoHover(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
           >
-            {msg.ui.scrollToContinue}
-          </motion.p>
-          {fullscreenVideoHover && (
-            <div className="absolute bottom-8 right-6 md:bottom-12 md:right-10 flex items-center gap-2 rounded-lg bg-black/70 px-2 py-1.5 z-10">
-              <button
-                type="button"
-                onClick={() => setFullscreenVideoPaused((p) => !p)}
-                className="text-white hover:text-white/80 transition-colors"
-                aria-label={fullscreenVideoPaused ? msg.ui.video.play : msg.ui.video.pause}
-              >
-                {fullscreenVideoPaused ? (
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden><path d="M8 5v14l11-7z" /></svg>
-                ) : (
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></svg>
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => setAllVideosMuted((m) => !m)}
-                className="text-white hover:text-white/80 transition-colors"
-                aria-label={allVideosMuted ? msg.ui.video.unmute : msg.ui.video.mute}
-              >
-                {allVideosMuted ? (
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.5 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" /></svg>
-                ) : (
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.5 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
-                )}
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+            <motion.video
+              ref={fullscreenVideoRef}
+              src={MIRACLE_CG_VIDEO_URL}
+              className="absolute inset-0 w-full h-full object-cover"
+              loop
+              muted={allVideosMuted}
+              playsInline
+              aria-label={msg.ui.video.miracleCgAria}
+              initial={{ opacity: 0, scale: 1.02 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
+              transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+            />
+            <motion.p
+              className="absolute left-6 bottom-8 md:left-10 md:bottom-12 text-white text-sm md:text-base font-semibold tracking-wide z-10"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{
+                duration: 2.2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              {msg.ui.scrollToContinue}
+            </motion.p>
+            {fullscreenVideoHover && (
+              <div className="absolute bottom-8 right-6 md:bottom-12 md:right-10 flex items-center gap-2 rounded-lg bg-black/70 px-2 py-1.5 z-10">
+                <button
+                  type="button"
+                  onClick={() => setFullscreenVideoPaused((p) => !p)}
+                  className="text-white hover:text-white/80 transition-colors"
+                  aria-label={fullscreenVideoPaused ? msg.ui.video.play : msg.ui.video.pause}
+                >
+                  {fullscreenVideoPaused ? (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden><path d="M8 5v14l11-7z" /></svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></svg>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAllVideosMuted((m) => !m)}
+                  className="text-white hover:text-white/80 transition-colors"
+                  aria-label={allVideosMuted ? msg.ui.video.unmute : msg.ui.video.mute}
+                >
+                  {allVideosMuted ? (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.5 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" /></svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.5 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
+                  )}
+                </button>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
       <main>
         <Hero />
         <SectionInfo />
-        <section className="w-full overflow-hidden" aria-hidden>
-          <img
+        <section className="w-full overflow-hidden pb-[20vh]" aria-hidden>
+          <motion.img
             src="https://res.cloudinary.com/dcsejrast/image/upload/v1771563868/%E5%BA%8F%E5%88%97%E4%B8%AD%E4%B9%A6_y5eygh.png"
             alt=""
             className="w-full h-52 md:h-72 object-cover object-top block"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ amount: 0.8, once: false }}
+            transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
           />
         </section>
         {/* ========== 上一个 section：Mira 那句话（已注释） ========== */}
@@ -480,6 +498,18 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                       }}
                       onMouseEnter={() => setTocHoverIndex(i)}
                       onMouseLeave={() => setTocHoverIndex(null)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const el = document.getElementById(item.id);
+                        if (!el) return;
+                        // 以右侧 section 内的标题（h2）为基准，让标题贴近视口顶部
+                        const title = el.querySelector("h2");
+                        const targetEl = title ?? el;
+                        const rect = targetEl.getBoundingClientRect();
+                        const topOffset = 56; // 标题距离视口顶部的距离（留出固定导航）
+                        const targetY = rect.top + window.scrollY - topOffset;
+                        window.scrollTo({ top: targetY, behavior: "smooth" });
+                      }}
                     >
                       {item.label}
                     </a>
@@ -492,10 +522,17 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
           <article className="flex-1 min-w-0 pl-[3.5%] pr-5 md:pl-[10%] min-[1350px]:pl-[12%]">
             {msg.sections.flatMap((section) => {
               const sectionEl = (
-                <section
+                <motion.section
                   key={section.id}
                   id={section.id}
-                  className="pt-12 pb-12 sm:pt-20 sm:pb-20 md:pt-32 md:pb-32 first:pt-[20vh]"
+                  className="case-study-section pt-12 pb-12 sm:pt-20 sm:pb-20 md:pt-32 md:pb-32"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false, amount: 0.45 }}
+                  transition={{
+                    duration: 0.6,
+                    ease: [0.25, 0.1, 0.25, 1],
+                  }}
                 >
                 {section.id === "overview" ? (
                   /* Overview 模块：左侧文字可独立滚动，右侧图片 sticky 不动；滚到模块最底后整块划走进入 Research */
@@ -519,11 +556,15 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col items-end sticky top-20 self-start">
-                      <img
+                      <motion.img
                         src="https://res.cloudinary.com/dcsejrast/image/upload/v1771656362/Overview_vkwaoq.png"
                         alt=""
                         className="w-[50vw] h-[90vh] object-cover object-top border border-white/10 mt-0 block"
                         aria-hidden
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ amount: 0.5, once: false }}
+                        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
                       />
                     </div>
                   </div>
@@ -562,11 +603,15 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                       ref={researchDataRef}
                       className="relative flex-1 min-w-0 flex flex-col items-end sticky top-20 self-start w-[50vw] max-w-[50vw] h-[90vh] overflow-visible border border-white/0 bg-black/0"
                     >
-                      <img
+                      <motion.img
                         src="https://res.cloudinary.com/dcsejrast/image/upload/v1771900673/background_tg6e7u.svg"
                         alt=""
                         className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
                         aria-hidden
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ amount: 0.8, once: false }}
+                        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
                       />
                       <div className="relative z-10 w-full h-full flex flex-col p-3 sm:p-4 md:p-5 lg:p-6 min-h-0">
                         {/* 上下分布时：20% / 20% / 30% / 30%；xl 时最后两块左右并排 */}
@@ -574,11 +619,29 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                         <div className="flex-[0_0_20%] min-h-0 flex flex-col justify-center">
                           <div className="grid grid-cols-2 w-full">
                             <div className="flex items-center gap-1.5 sm:gap-2 justify-self-start">
-                              <img src="https://res.cloudinary.com/dcsejrast/image/upload/v1771723064/male_nbafkt.svg" alt="" className="w-4 h-5 sm:w-5 sm:h-6 md:w-6 md:h-8 lg:w-7 lg:h-9 shrink-0" aria-hidden />
+                              <motion.img
+                                src="https://res.cloudinary.com/dcsejrast/image/upload/v1771723064/male_nbafkt.svg"
+                                alt=""
+                                className="w-4 h-5 sm:w-5 sm:h-6 md:w-6 md:h-8 lg:w-7 lg:h-9 shrink-0"
+                                aria-hidden
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ amount: 0.8, once: false }}
+                                transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                              />
                               <span className="text-white text-xl sm:text-2xl md:text-2xl lg:text-5xl font-light">{animPercent1}%</span>
                             </div>
                             <div className="flex items-center gap-1.5 sm:gap-2 justify-self-start">
-                              <img src="https://res.cloudinary.com/dcsejrast/image/upload/v1771723039/female_h37jzu.svg" alt="" className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 shrink-0" aria-hidden />
+                              <motion.img
+                                src="https://res.cloudinary.com/dcsejrast/image/upload/v1771723039/female_h37jzu.svg"
+                                alt=""
+                                className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 shrink-0"
+                                aria-hidden
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ amount: 0.8, once: false }}
+                                transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                              />
                               <span className="text-white text-xl sm:text-2xl md:text-2xl lg:text-5xl font-light">{animPercent2}%</span>
                             </div>
                           </div>
@@ -615,14 +678,32 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                           {/* 模块三：30% - 两个花费块，上下分布时 icon/字适当缩小 */}
                           <div className="flex-[0_0_50%] xl:flex-[1_1_50%] min-h-0 flex flex-col justify-center gap-10 xl:gap-0">
                             <div className="flex flex-row items-center gap-2 sm:gap-3">
-                              <img src="https://res.cloudinary.com/dcsejrast/image/upload/v1771723065/off_game_qruuwo.svg" alt="" className="w-8 h-8 sm:w-10 sm:h-10 xl:w-20 xl:h-20 shrink-0 mt-0.5" aria-hidden />
+                              <motion.img
+                                src="https://res.cloudinary.com/dcsejrast/image/upload/v1771723065/off_game_qruuwo.svg"
+                                alt=""
+                                className="w-8 h-8 sm:w-10 sm:h-10 xl:w-20 xl:h-20 shrink-0 mt-0.5"
+                                aria-hidden
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ amount: 0.8, once: false }}
+                                transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                              />
                               <div className="flex flex-col gap-0.5 min-w-0">
                                 <span className="text-white text-sm sm:text-base xl:text-3xl font-light">~¥{animAmount1}</span>
                                 <p className="text-white/80 text-xs sm:text-sm xl:text-sm">{msg.ui.research.companionSpendPerMonth}</p>
                               </div>
                             </div>
                             <div className="flex flex-row items-center gap-2 sm:gap-3 xl:mt-20">
-                              <img src="https://res.cloudinary.com/dcsejrast/image/upload/v1771723063/In_game_nu3a38.svg" alt="" className="w-8 h-8 sm:w-10 sm:h-10 xl:w-20 xl:h-20 shrink-0 mt-0.5" aria-hidden />
+                              <motion.img
+                                src="https://res.cloudinary.com/dcsejrast/image/upload/v1771723063/In_game_nu3a38.svg"
+                                alt=""
+                                className="w-8 h-8 sm:w-10 sm:h-10 xl:w-20 xl:h-20 shrink-0 mt-0.5"
+                                aria-hidden
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ amount: 0.8, once: false }}
+                                transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                              />
                               <div className="flex flex-col gap-0.5 min-w-0">
                                 <span className="text-white text-sm sm:text-base xl:text-3xl font-light">~¥{animAmount2}</span>
                                 <p className="text-white/80 text-xs sm:text-sm xl:text-sm">{msg.ui.research.inGameSpendPerMonth}</p>
@@ -661,32 +742,51 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                         { src: "https://res.cloudinary.com/dcsejrast/image/upload/v1771795223/Group_36_nj71xe.svg", align: "left" },
                       ].map((img, i) => (
                         <div key={i} className={`flex flex-1 min-h-0 ${img.align === "left" ? "justify-start" : "justify-end"}`}>
-                          <img
+                          <motion.img
                             src={img.src}
                             alt=""
                             className="max-w-full max-h-full w-auto h-full object-contain object-top border border-white/0 block"
                             aria-hidden
+                            initial={{ opacity: 0, y: 24 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ amount: 0.5, once: false }}
+                            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
                           />
                         </div>
                       ))}
                     </div>
                   </div>
                 ) : section.id === "system-design" ? (
-                  /* System Design：标题 + 结构图 + 多个块；左侧文字可高于 90vh 时整行变高，右侧视频 sticky 吸顶、左侧单独滚动 */
-                  <div className="flex flex-col gap-14 md:gap-16 overflow-visible">
-                    <h2 className="text-white text-4xl md:text-5xl font-semibold tracking-tight">
-                      {section.title}
-                    </h2>
-                    <img
-                      src="https://res.cloudinary.com/dcsejrast/image/upload/v1771820397/structure_kktejt.svg"
-                      alt={msg.systemDesign.structureAlt}
-                      className="w-full max-w-full h-auto block"
-                      aria-hidden
-                    />
-                    {/* 每块：左侧无 max-height 随内容增高，右侧固定 90vh 且 sticky；视频右缘与 header 最右文字对齐（由 article pr-5 保证，不撑宽页面） */}
+                  /* System Design：标题+图一块 + 下面每块均为吸附模块 */
+                  <div className="flex flex-col gap-20 md:gap-24 overflow-visible">
+                    <div className="flex flex-col gap-6 md:gap-8">
+                      <h2 className="text-white text-4xl md:text-5xl font-semibold tracking-tight">
+                        {section.title}
+                      </h2>
+                      <motion.img
+                        src="https://res.cloudinary.com/dcsejrast/image/upload/v1771820397/structure_kktejt.svg"
+                        alt={msg.systemDesign.structureAlt}
+                        className="w-full max-w-full h-auto block"
+                        aria-hidden
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ amount: 0.5, once: false }}
+                        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                      />
+                    </div>
+                    {/* 每块：左侧无 max-height 随内容增高，右侧固定高度且 sticky；进入视口时滑显 */}
                     {[0, 2, 4].map((startIdx) => (
-                      <div key={startIdx} className="flex flex-row items-start gap-8 md:gap-10 overflow-visible">
-                        <div className="min-w-0 flex-1 max-w-[50%] flex flex-col min-h-[90vh] overflow-visible">
+                      <motion.div
+                        key={startIdx}
+                        className={`flex flex-row items-start gap-8 md:gap-10 overflow-visible ${
+                          startIdx === 0 ? "" : "mt-16 md:mt-24"
+                        }`}
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: false, amount: 0.45 }}
+                        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                      >
+                        <div className="min-w-0 flex-1 max-w-[50%] flex flex-col min-h-[80vh] overflow-visible">
                             {startIdx === 0 ? (
                               <>
                                 <h3 className="text-white text-3xl md:text-4xl font-semibold tracking-tight shrink-0">
@@ -733,14 +833,14 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                           )}
                         </div>
                         {/* 右列铺满至内容区右边缘，与 header 右缘（pr-5）对齐；视频在列内右对齐 */}
-                        <div className="flex-1 min-w-0 flex flex-col items-end self-start h-[90vh] max-h-[90vh] sticky top-20">
+                        <div className="flex-1 min-w-0 flex flex-col items-end self-start h-[80vh] max-h-[80vh] sticky top-20">
                           <SystemDesignVideo
                             src={startIdx === 0 ? MOTION_VIDEO_URL : startIdx === 2 ? FREE_CHAT_VIDEO_URL : LONG_TERM_MEMORY_VIDEO_URL}
                             isMuted={allVideosMuted}
                             onMutedToggle={() => setAllVideosMuted((m) => !m)}
                           />
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 ) : section.id === "risk-safety" ? (
@@ -824,11 +924,15 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col gap-4 md:gap-6 h-[90vh] sticky top-20 self-start max-w-[50vw]">
                       <div className="flex justify-end h-full">
-                        <img
+                        <motion.img
                           src="https://res.cloudinary.com/dcsejrast/image/upload/v1771914267/sunset_pkcrmh.svg"
                           alt=""
                           className="h-full w-auto object-cover border border-white/0 block"
                           aria-hidden
+                          initial={{ opacity: 0, y: 24 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ amount: 0.5, once: false }}
+                          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
                         />
                       </div>
                     </div>
@@ -845,7 +949,7 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                     </div>
                   </>
                 )}
-              </section>
+              </motion.section>
               );
               if (section.id === "results") {
                 return [

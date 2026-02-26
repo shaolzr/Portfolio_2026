@@ -21,3 +21,5 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* 案例页：点击目录后标题靠上（通过 JS 计算偏移） */

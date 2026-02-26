@@ -53,7 +53,7 @@ export default function HomeHero() {
           transition={{ duration: LETTER_DURATION, delay: 0.5, ease: EASE }}
         >
           <p className="text-white text-sm min-[1350px]:text-sm leading-[1.6] font-semibold opacity-80">
-            AI Project Manager & Robotics Engineer
+            AI Product Manager & Robotics Engineer
           </p>
           <motion.p
             className="hidden min-[1350px]:block text-white text-xs min-[1350px]:text-sm font-semibold tracking-wide shrink-0"
