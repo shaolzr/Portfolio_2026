@@ -3,8 +3,7 @@ import { motion } from "framer-motion";
 import Header from "../components/Header";
 import HomeHero from "../components/HomeHero";
 import FeaturedProjects from "../components/FeaturedProjects";
-import SectionEthos from "../components/SectionEthos";
-import SectionJournal from "../components/SectionJournal";
+import SectionResume from "../components/SectionResume";
 import Footer from "../components/Footer";
 import MenuOverlay from "../components/MenuOverlay";
 
@@ -33,8 +32,7 @@ export default function HomePage() {
           transition={{ duration: 1, delay: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <FeaturedProjects />
-          <SectionEthos />
-          <SectionJournal />
+          <SectionResume />
           <Footer />
         </motion.div>
       </main>

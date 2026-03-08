@@ -1,8 +1,7 @@
 const sitemap = [
   { label: "Works", href: "/" },
-  { label: "About", href: "/#about" },
-  { label: "Careers", href: "/#careers" },
-  { label: "Contact", href: "/#contact" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "mailto:shaolinzr@163.com" },
 ];
 
 const social = [

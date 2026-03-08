@@ -4,9 +4,8 @@ import { useLanguage } from "../i18n/LanguageContext";
 
 const menuLinks = [
   { label: "Works", to: "/" },
-  { label: "About", to: "/#about" },
-  { label: "Careers", to: "/#careers" },
-  { label: "Contact", to: "/#contact" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "mailto:shaolinzr@163.com" },
 ];
 
 interface HeaderProps {
