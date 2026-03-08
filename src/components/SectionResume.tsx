@@ -55,7 +55,7 @@ export default function SectionResume() {
             </p>
             <div className="flex gap-4 mt-2">
               <a
-                href="mailto:shaolinzr@163.com"
+                href="mailto:shaolzr@gmail.com"
                 className="text-white text-sm font-semibold inline-flex items-center gap-1.5 hover:opacity-70 transition-opacity"
               >
                 {msg.aboutBlock.emailLink}

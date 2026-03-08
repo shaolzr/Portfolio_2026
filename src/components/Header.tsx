@@ -20,10 +20,11 @@ export default function Header({
   const { lang, toggleLang } = useLanguage();
   const msg = homeMessages[lang];
   const langToggleLabel = lang === "en" ? "中文" : "EN";
+  const tencentCasePath = `/case-studies/${encodeURIComponent("Tencent - QQ Spend")}`;
   const menuLinks = [
-    { label: msg.menu.works, to: "/" },
+    { label: msg.menu.works, to: tencentCasePath },
     { label: msg.menu.about, to: "/about" },
-    { label: msg.menu.contact, to: "mailto:shaolinzr@163.com" },
+    { label: msg.menu.contact, to: "mailto:shaolzr@gmail.com" },
   ];
 
   return (

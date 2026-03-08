@@ -81,10 +81,10 @@ export default function AboutPage() {
               variants={fadeUp}
             >
               <a
-                href="mailto:shaolinzr@163.com"
+                href="mailto:shaolzr@gmail.com"
                 className="text-white/60 text-sm font-medium hover:text-white transition-colors"
               >
-                shaolinzr@163.com
+                shaolzr@gmail.com
               </a>
               <a
                 href="https://www.linkedin.com/in/shaolzr"
@@ -94,7 +94,6 @@ export default function AboutPage() {
               >
                 LinkedIn ↗
               </a>
-              <span className="text-white/40 text-sm">+86 133 1384 7307</span>
             </motion.div>
           </div>
         </section>
@@ -249,7 +248,7 @@ export default function AboutPage() {
                 Let's build something meaningful together.
               </h2>
               <a
-                href="mailto:shaolinzr@163.com"
+                href="mailto:shaolzr@gmail.com"
                 className="inline-flex items-center gap-2 text-white text-sm uppercase tracking-wider hover:opacity-70 transition-opacity w-fit"
               >
                 Get in touch

@@ -31,7 +31,7 @@ export const homeMessages: Record<
   zh: {
     meta: { siteTitle: "邵林峥嵘" },
     hero: {
-      title: "邵林峥嵘",
+      title: "SHAO Linzhengrong",
       subtitle: "AI 产品经理 & 机器人工程师",
       scrollToExplore: "向下滚动探索",
     },

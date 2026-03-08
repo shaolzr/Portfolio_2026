@@ -1,10 +1,12 @@
 import { useLanguage } from "../i18n/LanguageContext";
 import { homeMessages } from "../i18n/homeMessages";
 
+const TENCENT_CASE_SLUG = "Tencent - QQ Spend";
+
 const sitemapHrefs = [
-  { key: "works" as const, href: "/" },
-  { key: "about" as const, href: "/about" },
-  { key: "contact" as const, href: "mailto:shaolinzr@163.com" },
+  { key: "works" as const, href: `/case-studies/${encodeURIComponent(TENCENT_CASE_SLUG)}` },
+  { key: "about" as const, href: "/about#experience" },
+  { key: "contact" as const, href: "mailto:shaolzr@gmail.com" },
 ];
 
 const social = [
