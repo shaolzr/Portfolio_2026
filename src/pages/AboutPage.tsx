@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import MenuOverlay from "../components/MenuOverlay";
+import { useLanguage } from "../i18n/LanguageContext";
+import { aboutMessages } from "../i18n/aboutMessages";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -13,90 +15,19 @@ const fadeUp = {
   }),
 };
 
-// ─── 工作经历 ───────────────────────────────────────────────
-const experiences = [
-  {
-    company: "Tencent",
-    role: "AI Product Manager Intern",
-    period: "Jun 2025 – Sep 2025",
-    location: "Shenzhen, China",
-    bullets: [
-      "Led end-to-end product strategy and AI system design for Miracle, QQ Speed's first AI companion agent.",
-      "Conducted 320+ player surveys and 30+ in-depth interviews to identify the emotional-companionship gap.",
-      "Pivoted product direction from skill enhancement to relationship-driven retention, outperforming the original brief.",
-      "Designed a multi-layer risk-control framework covering prompt guardrails, hallucination mitigation, and system stability.",
-      "Delivered 7,000+ paying users, ¥1.75M first-week revenue, and 65%+ seven-day retention within 5 days of launch.",
-    ],
-  },
-  {
-    company: "AI Company · Academic Agent Project",
-    role: "AI Product Manager",
-    period: "Jul 2023 – Jul 2024",
-    location: "China",
-    bullets: [
-      "Owned the product lifecycle of an Academic Agent chatbot serving university students.",
-      "Designed RAG-based knowledge retrieval pipelines to ground answers in verified academic sources.",
-      "Integrated GPT API, DeepSeek (int4/fp8/fp16), and Qwen models; ran A/B tests to balance quality and cost.",
-      "Built badcase review workflows that reduced hallucination rate by ~95% and improved prompt reliability.",
-      "Grew DAU by 30%+ and achieved 50% user satisfaction improvement through iterative product releases.",
-    ],
-  },
-  {
-    company: "BigData & UX Platform",
-    role: "Product Manager",
-    period: "Mar 2022 – Sep 2024",
-    location: "China",
-    bullets: [
-      "Defined and executed product roadmaps across big-data and UX analytics platforms.",
-      "Collaborated with engineering and design to deliver AML-integrated data pipelines.",
-      "Led user research and translated insights into feature requirements and prioritisation frameworks.",
-    ],
-  },
-];
-
-// ─── 教育背景 ───────────────────────────────────────────────
-const education = [
-  {
-    school: "University · US News Rank #7",  // TODO: 填入学校名
-    degree: "Master's Degree",
-    field: "Information Systems / HCI",       // TODO: 填入专业
-    period: "Sep 2024 – Apr 2026",
-    gpa: "3.9 / 4.0",
-  },
-  {
-    school: "University · QS Rank #96",       // TODO: 填入学校名
-    degree: "Exchange / Postgraduate",
-    field: "Engineering",                      // TODO: 填入专业
-    period: "Sep 2020 – Nov 2021",
-    gpa: "16.6 / 20.0",
-  },
-  {
-    school: "Bachelor's University",           // TODO: 填入学校名
-    degree: "Bachelor's Degree",
-    field: "Engineering / Computer Science",   // TODO: 填入专业
-    period: "Sep 2015 – Jul 2019",
-    gpa: "3.7 / 4.0",
-  },
-];
-
-// ─── 技能 ───────────────────────────────────────────────────
-const skills = {
-  "Product": ["Product Strategy", "System Design", "User Research", "Competitive Analysis", "Roadmapping", "Data Strategy", "Problem Definition", "Evaluation"],
-  "AI & Engineering": ["Prompt Engineering", "RAG", "Model Selection", "Risk Control", "Python", "JavaScript", "SQL", "Vibe-coding"],
-  "Design & Tools": ["Figma", "Sketch", "Axure", "Tableau", "Adobe Suite"],
-};
-
 function Line() {
   return <div className="h-px w-full bg-white/15" />;
 }
 
 export default function AboutPage() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { lang } = useLanguage();
+  const msg = aboutMessages[lang];
 
   useEffect(() => {
-    document.title = "About | SHAO Linzhengrong";
+    document.title = lang === "zh" ? "关于 | 邵林正荣" : "About | SHAO Linzhengrong";
     window.scrollTo(0, 0);
-  }, []);
+  }, [lang]);
 
   return (
     <>
@@ -119,7 +50,7 @@ export default function AboutPage() {
                 animate="visible"
                 variants={fadeUp}
               >
-                About
+                {msg.aboutPageHero.label}
               </motion.p>
               <motion.h1
                 className="text-white font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.1] tracking-tight mb-8"
@@ -137,10 +68,7 @@ export default function AboutPage() {
                 animate="visible"
                 variants={fadeUp}
               >
-                AI Product Manager & Robotics Engineer with a track record of building
-                emotionally intelligent products at scale. I bridge the gap between
-                cutting-edge AI capability and real human needs — turning research
-                insights into products that people genuinely feel.
+                {msg.aboutPageHero.intro}
               </motion.p>
             </div>
 
@@ -181,11 +109,11 @@ export default function AboutPage() {
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              Work Experience
+              {msg.sections.workExperience}
             </motion.p>
 
             <div className="flex flex-col gap-0">
-              {experiences.map((exp, i) => (
+              {msg.experiences.map((exp, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 16 }}
@@ -234,11 +162,11 @@ export default function AboutPage() {
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              Education
+              {msg.sections.education}
             </motion.p>
 
             <div className="flex flex-col gap-0">
-              {education.map((edu, i) => (
+              {msg.education.map((edu, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 16 }}
@@ -250,7 +178,7 @@ export default function AboutPage() {
                   <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 py-8">
                     <div className="flex flex-col gap-1">
                       <span className="text-white/50 text-sm">{edu.period}</span>
-                      <span className="text-white/40 text-xs mt-1">GPA {edu.gpa}</span>
+                      <span className="text-white/40 text-xs mt-1">{msg.labels.gpa} {edu.gpa}</span>
                     </div>
                     <div>
                       <p className="text-white font-semibold text-base mb-1">{edu.school}</p>
@@ -274,11 +202,11 @@ export default function AboutPage() {
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              Skills
+              {msg.sections.skills}
             </motion.p>
 
             <div className="flex flex-col gap-0">
-              {Object.entries(skills).map(([category, items], i) => (
+              {msg.skills.map(({ category, items }, i) => (
                 <motion.div
                   key={category}
                   initial={{ opacity: 0, y: 16 }}

@@ -6,15 +6,17 @@ import FeaturedProjects from "../components/FeaturedProjects";
 import SectionResume from "../components/SectionResume";
 import Footer from "../components/Footer";
 import MenuOverlay from "../components/MenuOverlay";
-
-const SITE_TITLE = "SHAO Linzhengrong";
+import { useLanguage } from "../i18n/LanguageContext";
+import { homeMessages } from "../i18n/homeMessages";
 
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { lang } = useLanguage();
+  const msg = homeMessages[lang];
 
   useEffect(() => {
-    document.title = SITE_TITLE;
-  }, []);
+    document.title = msg.meta.siteTitle;
+  }, [msg.meta.siteTitle]);
 
   return (
     <>

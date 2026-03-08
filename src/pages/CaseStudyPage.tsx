@@ -153,6 +153,7 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
   const moreWorksSectionRef = useRef<HTMLElement | null>(null);
   const [tocSectionInZone, setTocSectionInZone] = useState(false);
   const [moreWorksInBottomFifth, setMoreWorksInBottomFifth] = useState(false);
+  const [pastReflection, setPastReflection] = useState(false);
   const longTermMemoryVideoZoneRef = useRef<HTMLDivElement | null>(null);
   const fullscreenVideoRef = useRef<HTMLVideoElement | null>(null);
   const [videoOverlayActive, setVideoOverlayActive] = useState(false);
@@ -220,10 +221,12 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // 目录显示：中间 section 在视口内 且 More Works 未进视口底部 20% 且未处于全屏视频滑道；上下滑用同一套规则
+  // 目录显示：中间 section 在视口内 且 More Works 未进视口 且未滚过 Reflection 且未处于全屏视频滑道
   useEffect(() => {
-    setLeftNavVisible(tocSectionInZone && !moreWorksInBottomFifth && !videoOverlayActive);
-  }, [tocSectionInZone, moreWorksInBottomFifth, videoOverlayActive]);
+    setLeftNavVisible(
+      tocSectionInZone && !moreWorksInBottomFifth && !videoOverlayActive && !pastReflection
+    );
+  }, [tocSectionInZone, moreWorksInBottomFifth, videoOverlayActive, pastReflection]);
 
   // 中间 section 是否与视口有交集（任意重叠即算）；不裁 rootMargin，上下滑边界一致
   useEffect(() => {
@@ -251,6 +254,19 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
     );
     ob.observe(el);
     return () => ob.disconnect();
+  }, []);
+
+  // 滚过 Reflection 后左侧目录一并消失（Reflection 顶部一离开视口就隐藏，无 More Works 的案例页如 Tencent 也生效）
+  useEffect(() => {
+    const el = document.getElementById("reflection");
+    if (!el) return;
+    const onScroll = () => {
+      const rect = el.getBoundingClientRect();
+      setPastReflection(rect.top < 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // Results 与 Reflection 之间全屏视频滑道：进入视口时显示全屏 overlay，离开时恢复
@@ -967,10 +983,12 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
           </article>
         </section>
 
-        {/* ========== 下一个 section：More Works；进入视口底部 1/5 时左侧目录消失 ========== */}
-        <section ref={moreWorksSectionRef} id="case-study-more-works">
-          <MoreWorks />
-        </section>
+        {/* ========== 下一个 section：More Works；Tencent 项目页隐藏 ========== */}
+        {!(slug && decodeURIComponent(slug).toLowerCase().includes("tencent")) && (
+          <section ref={moreWorksSectionRef} id="case-study-more-works">
+            <MoreWorks />
+          </section>
+        )}
       </main>
       <Footer />
     </>

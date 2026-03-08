@@ -1,12 +1,7 @@
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLanguage } from "../i18n/LanguageContext";
-
-const menuLinks = [
-  { label: "Works", to: "/" },
-  { label: "About", to: "/about" },
-  { label: "Contact", to: "mailto:shaolinzr@163.com" },
-];
+import { homeMessages } from "../i18n/homeMessages";
 
 interface HeaderProps {
   scrollPercent?: number;
@@ -23,7 +18,13 @@ export default function Header({
 }: HeaderProps) {
   const isDetailPage = typeof scrollPercent === "number";
   const { lang, toggleLang } = useLanguage();
+  const msg = homeMessages[lang];
   const langToggleLabel = lang === "en" ? "中文" : "EN";
+  const menuLinks = [
+    { label: msg.menu.works, to: "/" },
+    { label: msg.menu.about, to: "/about" },
+    { label: msg.menu.contact, to: "mailto:shaolinzr@163.com" },
+  ];
 
   return (
     <nav
@@ -55,7 +56,7 @@ export default function Header({
               className="text-white text-xs md:text-sm font-semibold leading-none transition-colors whitespace-nowrap py-0 pl-2 pr-1"
               aria-label="Close menu"
             >
-              Close
+              {msg.menu.close}
             </button>
           ) : (
             <button
@@ -65,7 +66,7 @@ export default function Header({
               aria-label="Open menu"
               data-framer-name="Menu/Close"
             >
-              Menu
+              {msg.menu.menu}
             </button>
           )}
         </div>
@@ -138,7 +139,7 @@ export default function Header({
      
       >
         <span className="hidden min-[1350px]:inline leading-none">
-          {isDetailPage ? `${scrollPercent}%` : "Portfolio 2026"}
+          {isDetailPage ? `${scrollPercent}%` : msg.header.portfolioTitle}
         </span>
         <span className="min-[1350px]:hidden inline leading-none">
           {isMenuOpen ? (
@@ -148,7 +149,7 @@ export default function Header({
               className="text-white text-xs md:text-sm font-semibold leading-none transition-opacity p-0 m-0 border-0 bg-transparent cursor-pointer"
               aria-label="Close menu"
             >
-              Close
+              {msg.menu.close}
             </button>
           ) : (
             <button
@@ -157,7 +158,7 @@ export default function Header({
               className="text-white text-xs md:text-sm font-semibold leading-none transition-opacity p-0 m-0 border-0 bg-transparent cursor-pointer"
               aria-label="Open menu"
             >
-              Menu
+              {msg.menu.menu}
             </button>
           )}
         </span>

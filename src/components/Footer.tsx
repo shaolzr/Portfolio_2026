@@ -1,7 +1,10 @@
-const sitemap = [
-  { label: "Works", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "mailto:shaolinzr@163.com" },
+import { useLanguage } from "../i18n/LanguageContext";
+import { homeMessages } from "../i18n/homeMessages";
+
+const sitemapHrefs = [
+  { key: "works" as const, href: "/" },
+  { key: "about" as const, href: "/about" },
+  { key: "contact" as const, href: "mailto:shaolinzr@163.com" },
 ];
 
 const social = [
@@ -9,8 +12,12 @@ const social = [
 ];
 
 export default function Footer() {
+  const { lang } = useLanguage();
+  const msg = homeMessages[lang];
+  const sitemap = sitemapHrefs.map(({ key, href }) => ({ label: msg.footer[key], href }));
+
   return (
-    <footer className="bg-black flex flex-col min-h-[400px] md:min-h-[400px]">
+    <footer className="bg-black flex flex-col min-h-[400px] md:min-h-[400px] mt-12 md:mt-16">
       <div className="mx-5 md:mx-5 border-t border-white/20 shrink-0" aria-hidden />
       <div className="flex-1 flex flex-col px-5 md:px-5 pt-5 md:pt-5">
         <div className="flex flex-col gap-12 md:gap-20 min-[1350px]:grid min-[1350px]:grid-cols-[800px_1fr] min-[1350px]:gap-x-0 min-[1350px]:gap-y-12">
@@ -26,11 +33,11 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row gap-12 md:gap-y-0 md:gap-x-40">
             <div>
               <p className="text-white/50 text-sm font-bold uppercase tracking-wider mb-4">
-                Sitemap
+                {msg.footer.sitemap}
               </p>
               <ul className="flex flex-col gap-2">
                 {sitemap.map((link) => (
-                  <li key={link.label}>
+                  <li key={link.href}>
                     <a
                       href={link.href}
                       className="text-white opacity-80 text-sm font-bold md:text-sm hover:opacity-100 transition-opacity font-bold"
@@ -43,7 +50,7 @@ export default function Footer() {
             </div>
             <div>
               <p className="text-white/50 text-sm font-bold uppercase tracking-wider mb-4">
-                Social
+                {msg.footer.social}
               </p>
               <ul className="flex flex-col gap-2">
                 {social.map((link) => (
@@ -65,7 +72,7 @@ export default function Footer() {
       {/* 页面最下方：©2026 横向位置不变，Made by 与 Menu 对齐，二者同一行横向对齐 */}
       <div className="px-5 md:px-5 pt-4 pb-6 md:pb-4 shrink-0 flex flex-col sm:flex-row sm:items-center gap-4 text-xs text-white/30 min-[1350px]:grid min-[1350px]:grid-cols-[800px_1fr] min-[1350px]:gap-x-0 min-[1350px]:items-center">
         <p className="text-white/30 text-xs">©2026</p>
-        <span>Made by SHAO Linzhengrong</span>
+        <span>{msg.footer.madeBy}</span>
       </div>
     </footer>
   );
