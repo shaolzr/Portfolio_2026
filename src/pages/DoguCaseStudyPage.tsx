@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion, useInView, useScroll, useTransform } from "framer-motion";
 import Header from "../components/Header";
-import Hero from "../components/Hero";
-import SectionInfo from "../components/SectionInfo";
+import DoguHero from "../components/DoguHero";
+import DoguSectionInfo from "../components/DoguSectionInfo";
 import MoreWorks from "../components/MoreWorks";
 import Footer from "../components/Footer";
 import MenuOverlay from "../components/MenuOverlay";
 import { useLanguage } from "../i18n/LanguageContext";
-import { caseStudyMessages } from "../i18n/caseStudyMessages";
+import { doguCaseStudyMessages } from "../i18n/doguCaseStudyMessages";
 
 const MOTION_VIDEO_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/move.mp4";
 const FREE_CHAT_VIDEO_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/free%20chat.mp4";
@@ -26,7 +26,7 @@ function SystemDesignVideo({
   onMutedToggle: () => void;
 }) {
   const { lang } = useLanguage();
-  const ui = caseStudyMessages[lang].ui;
+  const ui = doguCaseStudyMessages[lang].ui;
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isInView, setIsInView] = useState(false);
@@ -180,11 +180,7 @@ function MagicWaveBackground() {
 
         v = pow(max(0.0, v * 1.8 - 0.3), 1.8);
         float b = clamp(v * 1.333, 0.0, 1.0);
-        // ↓↓ 把 Figma 色卡的 R G B（0-255）填到这三个数字就行
-        float r  = 255.0 / 255.0;
-        float g  =  187.0 / 255.0;
-        float pk = 231.0 / 255.0;
-        gl_FragColor = vec4(b * r, b * g, b * pk, 1.0);
+        gl_FragColor = vec4(b, b, b, 1.0);
       }
     `;
 
@@ -385,9 +381,9 @@ const CASE_SECTION_IDS = [
 ] as const;
 const SECTION_REVEAL_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
+export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
   const { lang } = useLanguage();
-  const msg = caseStudyMessages[lang];
+  const msg = doguCaseStudyMessages[lang];
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrollPercent, setScrollPercent] = useState(0);
   const [tocHoverIndex, setTocHoverIndex] = useState<number | null>(null);
@@ -655,12 +651,12 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
         )}
       </AnimatePresence>
       <main>
-        <Hero />
-        <SectionInfo />
+        <DoguHero />
+        <DoguSectionInfo />
         {/* ========== 全屏背景视频 ========== */}
         <section className="relative w-full h-screen overflow-hidden">
           <video
-            src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Miracle%20CG.mp4"
+            src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_back.mp4"
             autoPlay
             loop
             muted
@@ -672,12 +668,12 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
           {/* Overview 文字居中叠在视频上 */}
           <div className="absolute inset-0 flex flex-col items-center justify-center px-5">
             <div className="space-y-4 text-white/85 text-base font-light md:text-lg leading-relaxed max-w-xl text-left">
-              {caseStudyMessages[lang].sections[0].paragraphs.slice(0, 4).map((para, i) => (
+              {doguCaseStudyMessages[lang].sections[0].paragraphs.slice(0, 4).map((para, i) => (
                 <p key={i}>{para}</p>
               ))}
             </div>
             <div className="flex flex-wrap justify-center gap-2 mt-8">
-              {caseStudyMessages[lang].overviewSkills.map((s) => (
+              {doguCaseStudyMessages[lang].overviewSkills.map((s) => (
                 <span
                   key={s}
                   className="px-3 py-1.5 rounded-lg border border-white/30 text-white/70 text-sm font-light"
@@ -792,33 +788,6 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                         paragraphs={section.paragraphs}
                         containerClassName="space-y-0"
                       />
-                      <AnimatedParagraphs
-                        paragraphs={[msg.ui.research.verifyHypothesis]}
-                        containerClassName="mt-10 md:mt-12"
-                        baseDelay={section.paragraphs.length * 0.1}
-                      />
-                      <motion.div
-                        className="flex flex-col min-[1440px]:flex-row gap-6 min-[1440px]:gap-12 2xl:gap-16 mt-6 md:mt-8"
-                        initial={{ opacity: 0, y: 24 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                      >
-                        <div className="flex flex-col min-[1440px]:flex-row min-[1440px]:items-end gap-1 min-[1440px]:gap-4">
-                          <span className="text-white text-4xl md:text-5xl font-regular tracking-tight">320</span>
-                          <span className="text-white/80 text-base font-light md:text-lg">{msg.ui.research.playerSurveys}</span>
-                        </div>
-                        <div className="flex flex-col min-[1440px]:flex-row min-[1440px]:items-end gap-1 min-[1440px]:gap-4">
-                          <span className="text-white text-4xl md:text-5xl font-regular tracking-tight">30+</span>
-                          <span className="text-white/80 text-base font-light md:text-lg">{msg.ui.research.insightInterviews}</span>
-                        </div>
-                      </motion.div>
-                      <AnimatedParagraphs
-                        paragraphs={[msg.ui.research.weFound]}
-                        containerClassName="mt-10 md:mt-12"
-                        paraClassName="text-white/80 text-base font-light md:text-lg leading-relaxed"
-                        baseDelay={0.2}
-                      />
                     </div>
                   </div>
                 ) : section.id === "the-pivot" ? (
@@ -864,7 +833,7 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
                   <div className="flex flex-col gap-12 md:gap-16 overflow-visible">
                     <SystemDesignHeader
                       title={section.title}
-                      imageSrc="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/miracle_system.png"
+                      imageSrc="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_system.png"
                       imageAlt={msg.systemDesign.structureAlt}
                       onFullscreenChange={setIsStructureFullscreen}
                     />

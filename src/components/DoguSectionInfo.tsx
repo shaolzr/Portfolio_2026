@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "../i18n/LanguageContext";
-import { sectionInfoMessages } from "../i18n/sectionInfoMessages";
+import { doguSectionInfoMessages } from "../i18n/doguSectionInfoMessages";
 
 function Line() {
   return <div className="h-px w-full bg-white/20" />;
@@ -48,9 +48,9 @@ const sectionContainer = {
   },
 };
 
-export default function SectionInfo() {
+export default function DoguSectionInfo() {
   const { lang } = useLanguage();
-  const msg = sectionInfoMessages[lang];
+  const msg = doguSectionInfoMessages[lang];
   return (
     <section id="info" className="pl-5 pr-5 md:pr-10 py-12 md:py-16">
       <motion.div

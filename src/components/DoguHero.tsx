@@ -34,7 +34,7 @@ const titleBlock = {
 
 const numberText = "01";
 
-export default function Hero() {
+export default function DoguHero() {
   const imgRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: imgRef,
@@ -68,16 +68,19 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
         >
-          Tencent
+          DOGU
         </motion.h1>
       </div>
       <div ref={imgRef} className="w-full aspect-[4/3] md:aspect-[2/1] lg:min-h-[80vh] relative overflow-hidden">
-        <motion.img
-          src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Tencent_Hero.png"
-          alt="Tencent"
-          loading="eager"
+        <motion.video
+          src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Hero_iroi.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
           style={{ y: imgY }}
           className="absolute inset-0 w-full h-[125%] object-cover object-center"
+          aria-label="DOGU"
         />
       </div>
     </section>

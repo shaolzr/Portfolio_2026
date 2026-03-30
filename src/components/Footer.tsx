@@ -3,12 +3,6 @@ import { homeMessages } from "../i18n/homeMessages";
 
 const TENCENT_CASE_SLUG = "Tencent - QQ Spend";
 
-const sitemapHrefs = [
-  { key: "works" as const, href: `/case-studies/${encodeURIComponent(TENCENT_CASE_SLUG)}` },
-  { key: "about" as const, href: "/about#experience" },
-  { key: "contact" as const, href: "mailto:shaolzr@gmail.com" },
-];
-
 const social = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/shaolzr" },
 ];
@@ -16,6 +10,12 @@ const social = [
 export default function Footer() {
   const { lang } = useLanguage();
   const msg = homeMessages[lang];
+  const prefix = lang === "zh" ? "/zh" : "";
+  const sitemapHrefs = [
+    { key: "works" as const, href: `${prefix}/case-studies/${encodeURIComponent(TENCENT_CASE_SLUG)}` },
+    { key: "about" as const, href: `${prefix}/about#experience` },
+    { key: "contact" as const, href: "mailto:shaolzr@gmail.com" },
+  ];
   const sitemap = sitemapHrefs.map(({ key, href }) => ({ label: msg.footer[key], href }));
 
   return (
@@ -25,7 +25,7 @@ export default function Footer() {
         <div className="flex flex-col gap-12 md:gap-20 min-[1350px]:grid min-[1350px]:grid-cols-[800px_1fr] min-[1350px]:gap-x-0 min-[1350px]:gap-y-12">
           <div>
             <a
-              href="/"
+              href={prefix + "/"}
               className="text-white text-xl md:text-xl font-semibold block mb-8"
             >
               SHAO Linzhengrong
@@ -74,7 +74,9 @@ export default function Footer() {
       {/* 页面最下方：©2026 横向位置不变，Made by 与 Menu 对齐，二者同一行横向对齐 */}
       <div className="px-5 md:px-5 pt-4 pb-6 md:pb-4 shrink-0 flex flex-col sm:flex-row sm:items-center gap-4 text-xs text-white/30 min-[1350px]:grid min-[1350px]:grid-cols-[800px_1fr] min-[1350px]:gap-x-0 min-[1350px]:items-center">
         <p className="text-white/30 text-xs">©2026</p>
-        <span>{msg.footer.madeBy}</span>
+        <span className="w-full text-right sm:w-auto sm:ml-auto min-[1350px]:w-auto min-[1350px]:justify-self-end">
+          {msg.footer.madeBy}
+        </span>
       </div>
     </footer>
   );

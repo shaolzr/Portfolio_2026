@@ -1,34 +1,25 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export type Lang = "en" | "zh";
 
-type LanguageContextValue = {
-  lang: Lang;
-  setLang: (lang: Lang) => void;
-  toggleLang: () => void;
-};
+type LanguageContextValue = { lang: Lang };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-const STORAGE_KEY = "portfolio_lang";
-
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(() => {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw === "zh" || raw === "en" ? raw : "en";
-  });
-
-  const setLang = (next: Lang) => setLangState(next);
-  const toggleLang = () => setLangState((l) => (l === "en" ? "zh" : "en"));
+  const { pathname } = useLocation();
+  const lang: Lang = pathname === "/zh" || pathname.startsWith("/zh/") ? "zh" : "en";
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, lang);
     document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
   }, [lang]);
 
-  const value = useMemo(() => ({ lang, setLang, toggleLang }), [lang]);
-
-  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
+  return (
+    <LanguageContext.Provider value={{ lang }}>
+      {children}
+    </LanguageContext.Provider>
+  );
 }
 
 export function useLanguage() {
@@ -36,4 +27,3 @@ export function useLanguage() {
   if (!ctx) throw new Error("useLanguage must be used within LanguageProvider");
   return ctx;
 }
-

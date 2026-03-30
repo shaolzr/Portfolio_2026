@@ -2,8 +2,10 @@ import { BrowserRouter, useLocation, matchPath, Routes, Route } from "react-rout
 import { AnimatePresence, motion } from "framer-motion";
 import HomePage from "./pages/HomePage";
 import CaseStudyPage from "./pages/CaseStudyPage";
+import DoguComingSoonPage from "./pages/DoguComingSoonPage";
 import AboutPage from "./pages/AboutPage";
 import { LanguageProvider } from "./i18n/LanguageContext";
+import { useLenis } from "./lib/useLenis";
 
 // 从 Framer 源码提取的全局页面切换参数
 const pageTransition = {
@@ -14,19 +16,28 @@ const pageTransition = {
 };
 
 function AnimatedRoutes() {
+  useLenis();
   const location = useLocation();
-  const caseMatch = matchPath({ path: "/case-studies/:slug", end: true }, location.pathname);
+  const { pathname } = location;
+
+  // Strip /zh prefix to get the base path for route matching
+  const isZh = pathname === "/zh" || pathname.startsWith("/zh/");
+  const basePath = isZh ? (pathname.slice(3) || "/") : pathname;
+
+  const caseMatch = matchPath({ path: "/case-studies/:slug", end: true }, basePath);
   const slug = caseMatch?.params?.slug;
-  const key = location.pathname === "/" ? "home" : location.pathname;
+  const decodedSlug = slug ? decodeURIComponent(slug) : "";
+  const isDoguCase = decodedSlug.toLowerCase() === "dogu - iroi";
+  const key = pathname;
 
   const page =
-    location.pathname === "/" ? (
-      <HomePage />
-    ) : location.pathname === "/about" ? (
-      <AboutPage />
-    ) : caseMatch ? (
-      <CaseStudyPage slug={slug} />
-    ) : null;
+    basePath === "/" || basePath === ""
+      ? <HomePage />
+      : basePath === "/about"
+      ? <AboutPage />
+      : caseMatch
+      ? (isDoguCase ? <DoguComingSoonPage /> : <CaseStudyPage slug={slug} />)
+      : null;
 
   return (
     <AnimatePresence mode="wait">
@@ -48,13 +59,13 @@ function AnimatedRoutes() {
 
 function App() {
   return (
-    <LanguageProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <LanguageProvider>
         <Routes>
           <Route path="*" element={<AnimatedRoutes />} />
         </Routes>
-      </BrowserRouter>
-    </LanguageProvider>
+      </LanguageProvider>
+    </BrowserRouter>
   );
 }
 

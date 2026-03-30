@@ -17,13 +17,13 @@ export default function Header({
   onMenuClose,
 }: HeaderProps) {
   const isDetailPage = typeof scrollPercent === "number";
-  const { lang, toggleLang } = useLanguage();
+  const { lang } = useLanguage();
   const msg = homeMessages[lang];
-  const langToggleLabel = lang === "en" ? "中文" : "EN";
-  const tencentCasePath = `/case-studies/${encodeURIComponent("Tencent - QQ Spend")}`;
+  const prefix = lang === "zh" ? "/zh" : "";
+  const tencentCasePath = `${prefix}/case-studies/${encodeURIComponent("Tencent - QQ Spend")}`;
   const menuLinks = [
     { label: msg.menu.works, to: tencentCasePath },
-    { label: msg.menu.about, to: "/about" },
+    { label: msg.menu.about, to: `${prefix}/about` },
     { label: msg.menu.contact, to: "mailto:shaolzr@gmail.com" },
   ];
 
@@ -33,19 +33,11 @@ export default function Header({
       data-framer-name={isMenuOpen ? "Freelance - Open" : "Freelance Closed"}
     >
       <div className="absolute left-5 top-1 h-10 inline-flex items-baseline">
-        <a href="/" className="inline-block">
+        <a href={prefix + "/"} className="inline-block">
           <span className="text-white text-xs md:text-sm font-semibold opacity-90 leading-none">
             SHAO Linzhengrong
           </span>
         </a>
-        <button
-          type="button"
-          onClick={toggleLang}
-          className="text-white text-xs md:text-sm font-semibold leading-none transition-opacity whitespace-nowrap py-0 pl-2 pr-1"
-          aria-label={`Switch language to ${langToggleLabel}`}
-        >
-          {langToggleLabel}
-        </button>
       </div>
       {/* 大屏：中间 Menu + 内联链接 */}
       <div className="absolute top-1 h-10 left-[800px] hidden min-[1350px]:flex flex-row items-baseline gap-px px-5">

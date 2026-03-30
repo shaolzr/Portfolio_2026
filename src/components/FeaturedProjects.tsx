@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const projects = [
   {
@@ -8,15 +9,16 @@ const projects = [
     title: "Tencent",
     category: "AI Product Manager",
     year: "2025",
-    image: "https://res.cloudinary.com/dcsejrast/image/upload/v1771134698/copy_of_mira_e1ab8e.png",
+    image: "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Tencent_Hero.png",
+    imagePosition: "50% 5%",
     type: "image",
   },
   {
-    slug: "ralph-lauren",
-    title: "Ralph Lauren",
-    category: "Brand Identity",
-    year: "2025",
-    video: "https://ena-supply.b-cdn.net/Ellis/5740963-hd_2048_1080_25fps__61pct_smaller.mp4",
+    slug: "DOGU - IROI",
+    title: "DOGU",
+    category: "AI/Robotics Engineer",
+    year: "2026",
+    video: "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Hero_iroi.mp4",
     type: "video",
   },
   {
@@ -68,6 +70,8 @@ type Project = (typeof projects)[number];
 const titleBarLayout =
   "grid grid-cols-2 min-[1350px]:grid-cols-[780px_auto_1fr] gap-4 items-baseline w-full px-5";
 function ProjectBlock({ project }: { project: Project }) {
+  const { lang } = useLanguage();
+  const prefix = lang === "zh" ? "/zh" : "";
   const blockRef = useRef<HTMLDivElement>(null);
   // 整段 section 的滚动进度：0=section 顶在视口底，1=section 底在视口顶
   const { scrollYProgress } = useScroll({
@@ -79,8 +83,8 @@ function ProjectBlock({ project }: { project: Project }) {
     target: blockRef,
     offset: ["start end", "end center"],
   });
-  // 遮罩黑度：section 越进入视口越亮
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.3], [0.5, 0.0]);
+  // 遮罩黑度：进入视口时变亮，离开视口前再加深（所有 section 统一生效）
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.5, 0.0, 0.0, 0.5]);
   // 标题条：section 顶到视口 1/2 时才出现（约 progress 0.33）→ 固定屏幕中间 → section 底到视口 1/2 时消失
   const titleOpacity = useTransform(
     titleScrollProgress,
@@ -91,7 +95,7 @@ function ProjectBlock({ project }: { project: Project }) {
   return (
     <div ref={blockRef} className="min-h-screen relative cursor-pointer">
       <Link
-        to={`/case-studies/${project.slug}`}
+        to={`${prefix}/case-studies/${project.slug}`}
         className="block min-h-screen relative cursor-pointer"
       >
         <div className="absolute inset-0">
@@ -102,13 +106,16 @@ function ProjectBlock({ project }: { project: Project }) {
               muted
               playsInline
               autoPlay
+              preload="none"
               className="w-full h-full object-cover"
             />
           ) : (
             <img
               src={project.image}
               alt={project.title}
+              loading="lazy"
               className="w-full h-full object-cover"
+              style={{ objectPosition: "imagePosition" in project ? project.imagePosition : "50% 50%" }}
             />
           )}
           <motion.div
@@ -143,10 +150,8 @@ function ProjectBlock({ project }: { project: Project }) {
 export default function FeaturedProjects() {
   return (
     <section className="relative">
-      {projects.map((project, index) => (
-        <div key={project.slug} className={index === 0 ? "" : "hidden"}>
-          <ProjectBlock project={project} />
-        </div>
+      {projects.slice(0, 2).map((project) => (
+        <ProjectBlock key={project.slug} project={project} />
       ))}
     </section>
   );

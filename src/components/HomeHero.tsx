@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useLanguage } from "../i18n/LanguageContext";
 import { homeMessages } from "../i18n/homeMessages";
 
@@ -24,9 +25,17 @@ export default function HomeHero() {
   const title = msg.hero.title;
   const titleWords = lang === "zh" ? [title] : title.split(" ");
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+
   return (
-    <section className="relative min-h-[70vh] flex flex-col justify-end px-5 pb-6 bg-black">
-      <div className="relative w-full grid grid-cols-1 sm:grid-cols-[1fr_auto] min-[1350px]:grid-cols-[minmax(0,780px)_1fr] items-start sm:items-end min-[1350px]:items-end gap-2">
+    <section ref={sectionRef} className="relative min-h-[70vh] flex flex-col justify-end px-5 pb-6 bg-black overflow-hidden">
+      <motion.div style={{ y, opacity }} className="relative w-full grid grid-cols-1 sm:grid-cols-[1fr_auto] min-[1350px]:grid-cols-[minmax(0,780px)_1fr] items-start sm:items-end min-[1350px]:items-end gap-2">
         <motion.h1
           className="text-white font-bold text-4xl sm:text-5xl min-[1350px]:text-7xl"
           aria-label={title}
@@ -39,7 +48,7 @@ export default function HomeHero() {
               {word.split("").map((char, ci) => (
                 <motion.span
                   key={ci}
-                  style={{ display: "inline-block", willChange: "transform" }}
+                  style={{ display: "inline-block" }}
                   variants={letter}
                   transition={{ duration: LETTER_DURATION, ease: EASE }}
                 >
@@ -60,18 +69,15 @@ export default function HomeHero() {
             {msg.hero.subtitle}
           </p>
           <motion.p
-            className="hidden min-[1350px]:block text-white text-xs min-[1350px]:text-sm font-semibold tracking-wide shrink-0"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{
-              duration: 2.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            className="hidden min-[1350px]:block text-white text-xs min-[1350px]:text-sm font-semibold tracking-wide shrink-0 opacity-70"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.7 }}
+            transition={{ duration: 1, delay: 1 }}
           >
             {msg.hero.scrollToExplore}
           </motion.p>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }
