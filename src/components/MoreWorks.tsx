@@ -1,5 +1,14 @@
 import { useRef } from "react";
 
+export type MoreWorksProject = {
+  title: string;
+  category: string;
+  href: string;
+  type: "image" | "video";
+  image?: string;
+  video?: string;
+};
+
 function VideoThumbnail({ src }: { src: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const onMouseEnter = () => videoRef.current?.play();
@@ -25,34 +34,7 @@ function VideoThumbnail({ src }: { src: string }) {
   );
 }
 
-const projects = [
-  {
-    title: "Saint Lauren",
-    category: "Brand Identity",
-    href: "#",
-    image:
-      "https://framerusercontent.com/images/yL1Tzp86HnTmiPFOdH9t2prwXg.jpg",
-    type: "image",
-  },
-  {
-    title: "Tommas Quinn",
-    category: "Art Direction",
-    href: "#",
-    video:
-      "https://ena-supply.b-cdn.net/Ellis/540593_Posing%20Model%20Architecture%20Building_By_Cinematic_Vision_Artlist_HD_smaller.mp4",
-    type: "video",
-  },
-  {
-    title: "Cut & Paste",
-    category: "Digital Experience",
-    href: "#",
-    image:
-      "https://framerusercontent.com/images/tLBzII75sk1kD5ZSVUxPVyf9VSQ.jpg",
-    type: "image",
-  },
-];
-
-export default function MoreWorks() {
+export default function MoreWorks({ projects }: { projects: MoreWorksProject[] }) {
   return (
     <section className="px-5 md:px-10 py-12 md:py-20">
       <div className="border-t border-white/20 pt-8 md:pt-12">

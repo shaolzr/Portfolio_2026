@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion, useInView, useScroll, useTransform } from "framer-motion";
-import Header from "../components/Header";
-import DoguHero from "../components/DoguHero";
-import DoguSectionInfo from "../components/DoguSectionInfo";
-import MoreWorks from "../components/MoreWorks";
-import Footer from "../components/Footer";
-import MenuOverlay from "../components/MenuOverlay";
-import { useLanguage } from "../i18n/LanguageContext";
-import { doguCaseStudyMessages } from "../i18n/doguCaseStudyMessages";
+import Header from "../../components/Header";
+import DoguHero from "./DoguHero";
+import DoguSectionInfo from "./DoguSectionInfo";
+import MoreWorks from "../../components/MoreWorks";
+import Footer from "../../components/Footer";
+import MenuOverlay from "../../components/MenuOverlay";
+import { useLanguage } from "../../i18n/LanguageContext";
+import { doguCaseStudyMessages } from "./doguCaseStudyMessages";
 
 const MOTION_VIDEO_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/move.mp4";
 const FREE_CHAT_VIDEO_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/free%20chat.mp4";
 const LONG_TERM_MEMORY_VIDEO_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/longterm.mp4";
 /** Long term memory 下方全屏滑道使用的 CG 视频 */
-const MIRACLE_CG_VIDEO_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Miracle%20CG.mp4";
+const MIRACLE_CG_VIDEO_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_Iroi.mp4";
+const TOUCHSTONE_BG_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_sensor.png";
+const SYSTEM_HERO_IMAGE_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_system.png";
 
 /** System Design 右侧视频：同高、等比例宽、循环；hover 时右下角显示暂停/静音。静音状态由父组件统一控制。 */
 function SystemDesignVideo({
@@ -293,10 +295,10 @@ function SystemDesignHeader({
 
       {/* 真正全屏覆盖层，进入/离开视口时 500ms 淡入淡出 */}
       <div
-        className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none transition-opacity duration-500"
+        className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none"
         style={{ opacity: isInView ? 1 : 0 }}
       >
-        <MagicWaveBackground />
+        <div className="absolute inset-0 bg-black" aria-hidden />
         <div className="relative z-10 w-full h-full">
           <div className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 shrink-0 -rotate-90 whitespace-nowrap">
             <span className="text-white text-2xl md:text-3xl font-semibold tracking-tight">
@@ -304,9 +306,7 @@ function SystemDesignHeader({
             </span>
           </div>
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[65vw]">
-            <motion.div style={{ y: imageY }}>
-              <img src={imageSrc} alt={imageAlt} className="w-full h-auto" aria-hidden />
-            </motion.div>
+            <img src={imageSrc} alt={imageAlt} className="w-full h-auto" aria-hidden />
           </div>
         </div>
       </div>
@@ -369,15 +369,25 @@ function AnimatedParagraphs({
   );
 }
 
+/** 滚动进入/离开时施加黑色遮罩（与首页 FeaturedProjects 一致） */
+function ScrollDimSection({ children, className }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.5, 0.0, 0.0, 0.5]);
+  return (
+    <div ref={ref} className={className}>
+      {children}
+      <motion.div className="absolute inset-0 bg-black pointer-events-none" style={{ opacity: overlayOpacity }} />
+    </div>
+  );
+}
+
 type CaseStudyPageProps = { slug?: string };
 
 const CASE_SECTION_IDS = [
-  "research",
-  "the-pivot",
-  "system-design",
   "risk-safety",
   "results",
-  "reflection",
+  "futures",
 ] as const;
 const SECTION_REVEAL_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -393,8 +403,13 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
   const moreWorksSectionRef = useRef<HTMLElement | null>(null);
   const [tocSectionInZone, setTocSectionInZone] = useState(false);
   const [beforeResearch, setBeforeResearch] = useState(true);
+  const [isTouchstoneVisible, setIsTouchstoneVisible] = useState(false);
+  const [hasPassedSystemDesign, setHasPassedSystemDesign] = useState(false);
   const [moreWorksInBottomFifth, setMoreWorksInBottomFifth] = useState(false);
-  const [pastReflection, setPastReflection] = useState(false);
+  const [isFuturePastHalf, setIsFuturePastHalf] = useState(false);
+  const [solutionPhase, setSolutionPhase] = useState(0);
+  const [solutionCarousel, setSolutionCarousel] = useState(0); // 0 = video, 1 = UI svg
+  const [hardwareCarousel, setHardwareCarousel] = useState(0); // 0 = image1, 1 = image2
   const longTermMemoryVideoZoneRef = useRef<HTMLDivElement | null>(null);
   const fullscreenVideoRef = useRef<HTMLVideoElement | null>(null);
   const [videoOverlayActive, setVideoOverlayActive] = useState(false);
@@ -453,14 +468,29 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
       // research 顶部进入视口下半段前，隐藏目录
       const researchEl = document.getElementById("research");
       if (researchEl) {
-        setBeforeResearch(researchEl.getBoundingClientRect().top > window.innerHeight * 0.5);
+        const rect = researchEl.getBoundingClientRect();
+        setBeforeResearch(rect.top > window.innerHeight * 0.5);
+        setIsTouchstoneVisible(rect.top < window.innerHeight && rect.bottom > 0);
+      }
+      const riskSafetyEl = document.getElementById("risk-safety");
+      if (riskSafetyEl) {
+        const rect = riskSafetyEl.getBoundingClientRect();
+        setHasPassedSystemDesign(rect.top < window.innerHeight * 0.2);
+        const scrolledPast = Math.max(0, -rect.top);
+        setSolutionPhase(scrolledPast > window.innerHeight * 0.4 ? 1 : 0);
+      }
+      const futuresEl = document.getElementById("futures");
+      if (futuresEl) {
+        const rect = futuresEl.getBoundingClientRect();
+        const height = futuresEl.offsetHeight;
+        const scrolledAbove = Math.max(0, -rect.top);
+        setIsFuturePastHalf(height > 0 && scrolledAbove / height >= 0.7);
       }
     };
     onScroll();
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
 
   // 中间 section 是否与视口有交集（任意重叠即算）；不裁 rootMargin，上下滑边界一致
   useEffect(() => {
@@ -488,19 +518,6 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
     );
     ob.observe(el);
     return () => ob.disconnect();
-  }, []);
-
-  // 滚过 Reflection 后左侧目录一并消失（Reflection 顶部一离开视口就隐藏，无 More Works 的案例页如 Tencent 也生效）
-  useEffect(() => {
-    const el = document.getElementById("reflection");
-    if (!el) return;
-    const onScroll = () => {
-      const rect = el.getBoundingClientRect();
-      setPastReflection(rect.top < 0);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // Results 与 Reflection 之间全屏视频滑道：进入视口时显示全屏 overlay，离开时恢复
@@ -534,6 +551,21 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
     v.muted = allVideosMuted;
   }, [allVideosMuted, videoOverlayActive]);
 
+
+  // Solution zone 2：图片显示 10s 后切回视频；视频播完由 onEnded 触发切图片
+  useEffect(() => {
+    if (solutionPhase !== 1 || solutionCarousel !== 1) return;
+    const timer = setTimeout(() => setSolutionCarousel(0), 10000);
+    return () => clearTimeout(timer);
+  }, [solutionPhase, solutionCarousel]);
+
+  // Hardware 两张图：每 10 秒左右切换一次
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHardwareCarousel((prev) => (prev === 0 ? 1 : 0));
+    }, 10000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Results 三项数据：仅当滚动到该区域进入视口时才触发 0→7000 / 0→1.75M / 0→65 递增动画
   useEffect(() => {
@@ -654,7 +686,7 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
         <DoguHero />
         <DoguSectionInfo />
         {/* ========== 全屏背景视频 ========== */}
-        <section className="relative w-full h-screen overflow-hidden">
+        <ScrollDimSection className="relative w-full h-screen overflow-hidden">
           <video
             src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_back.mp4"
             autoPlay
@@ -669,21 +701,33 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
           <div className="absolute inset-0 flex flex-col items-center justify-center px-5">
             <div className="space-y-4 text-white/85 text-base font-light md:text-lg leading-relaxed max-w-xl text-left">
               {doguCaseStudyMessages[lang].sections[0].paragraphs.slice(0, 4).map((para, i) => (
-                <p key={i}>{para}</p>
+                <motion.p
+                  key={i}
+                  initial={{ opacity: 0, y: 24, x: -16 }}
+                  whileInView={{ opacity: 1, y: 0, x: 0 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.15 + i * 0.1 }}
+                >
+                  {para}
+                </motion.p>
               ))}
             </div>
             <div className="flex flex-wrap justify-center gap-2 mt-8">
-              {doguCaseStudyMessages[lang].overviewSkills.map((s) => (
-                <span
+              {doguCaseStudyMessages[lang].overviewSkills.map((s, i) => (
+                <motion.span
                   key={s}
                   className="px-3 py-1.5 rounded-lg border border-white/30 text-white/70 text-sm font-light"
+                  initial={{ opacity: 0, y: 24, x: -16 }}
+                  whileInView={{ opacity: 1, y: 0, x: 0 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.55 + i * 0.07 }}
                 >
                   {s}
-                </span>
+                </motion.span>
               ))}
             </div>
           </div>
-        </section>
+        </ScrollDimSection>
 
         {/* ========== 上一个 section：Mira 那句话（已注释） ========== */}
         {/* <section id="case-study-intro" className="bg-black">
@@ -702,13 +746,13 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
         </section> */}
 
         {/* ========== 中间 section：左侧目录 + Overview 等右侧内容 ========== */}
-        <section ref={tocSectionRef} id="case-study-toc-content" className="flex bg-black min-h-[60vh] pt-12 md:pt-16">
+        <section ref={tocSectionRef} id="case-study-toc-content" className="flex bg-black min-h-[60vh] pt-0">
           {/* 左侧占位 */}
           <div className="hidden md:block shrink-0 w-40 min-[1350px]:w-52" aria-hidden />
           {/* 左侧目录：overview 时隐藏 */}
           <nav
             className={`hidden md:block fixed left-0 top-1/2 -translate-y-1/2 z-10 pl-5 pr-5 py-4 transition-opacity duration-300 ${
-              beforeResearch || isStructureFullscreen || pastReflection
+              beforeResearch || isTouchstoneVisible || !hasPassedSystemDesign || isFuturePastHalf || moreWorksInBottomFifth
                 ? "opacity-0 pointer-events-none"
                 : "opacity-100"
             }`}
@@ -745,12 +789,10 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
                         e.preventDefault();
                         const el = document.getElementById(item.id);
                         if (!el) return;
-                        // 以右侧 section 内的标题（h2）为基准，让标题贴近视口顶部
-                        const title = el.querySelector("h2");
-                        const targetEl = title ?? el;
-                        const rect = targetEl.getBoundingClientRect();
-                        const topOffset = 56; // 标题距离视口顶部的距离（留出固定导航）
-                        const targetY = rect.top + window.scrollY - topOffset;
+                        // 统一按 section 顶部定位，避免单击/双击时目标不一致
+                        const rect = el.getBoundingClientRect();
+                        const topOffset = 20; // 留出固定 header 高度
+                        const targetY = Math.max(0, rect.top + window.scrollY - topOffset);
                         window.scrollTo({ top: targetY, behavior: "smooth" });
                       }}
                     >
@@ -764,14 +806,21 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
           {/* 右侧内容区：可滚动；右边缘与 header 对齐用 pr-5 */}
           <article className="flex-1 min-w-0 px-5 md:px-10 min-[1350px]:px-16">
             {msg.sections.flatMap((section) => {
-              const shouldAnimateSection = section.id !== "overview" && section.id !== "system-design";
+              const shouldAnimateSection =
+                section.id !== "overview" && section.id !== "system-design" && section.id !== "research" && section.id !== "risk-safety";
+              const sectionSpacingClass =
+                section.id === "overview"
+                  ? "pt-0 pb-0"
+                  : section.id === "system-design"
+                  ? "pt-0 pb-[200px]"
+                  : section.id === "research"
+                    ? "pt-0 pb-0 h-screen"
+                    : "pt-12 pb-12 sm:pt-20 sm:pb-20 md:pt-32 md:pb-32";
               const sectionEl = (
                 <motion.section
                   key={section.id}
                   id={section.id}
-                  className={`case-study-section ${
-                    section.id === "system-design" ? "pt-[200px] pb-[200px]" : "pt-12 pb-12 sm:pt-20 sm:pb-20 md:pt-32 md:pb-32"
-                  } ${section.id === "overview" ? "" : "min-h-[100vh]"}`}
+                  className={`case-study-section ${sectionSpacingClass} ${section.id === "overview" ? "" : "min-h-[100vh]"} ${section.id === "research" || section.id === "system-design" ? "relative" : ""}`}
                   initial={shouldAnimateSection ? { opacity: 0, y: 48 } : undefined}
                   whileInView={shouldAnimateSection ? { opacity: 1, y: 0 } : undefined}
                   viewport={shouldAnimateSection ? { amount: 0.55, once: false } : undefined}
@@ -779,17 +828,31 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
                 >
                 {section.id === "overview" ? null
                 : section.id === "research" ? (
-                  <div className="flex flex-col max-w-[50%] min-h-[90vh]">
-                    <AnimatedTitle className="text-white text-4xl md:text-5xl font-semibold tracking-tight mb-4 sm:mb-8 md:mb-12 lg:mb-20">
-                      {section.title}
-                    </AnimatedTitle>
-                    <div className="mt-auto text-white/80 text-base font-light md:text-lg leading-relaxed">
-                      <AnimatedParagraphs
-                        paragraphs={section.paragraphs}
-                        containerClassName="space-y-0"
-                      />
+                  <ScrollDimSection className="absolute top-0 bottom-0 -left-5 md:-left-[200px] min-[1350px]:-left-[272px] w-screen overflow-hidden">
+                    <img
+                      src={TOUCHSTONE_BG_URL}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover"
+                      aria-hidden
+                    />
+                    <div className="absolute inset-0 bg-black/25 backdrop-blur-[2px]" aria-hidden />
+                    <div className="absolute inset-0 flex items-center justify-center px-6">
+                      <div className="w-full max-w-3xl text-center">
+                        <h2 className="text-white text-3xl md:text-4xl font-semibold tracking-tight">
+                          {section.title}
+                        </h2>
+                        <p className="mt-10 md:mt-12 text-white/85 text-base md:text-lg font-light leading-relaxed">
+                          In hands-on lab learning, students often lack timely,{" "}
+                          <span className="font-semibold text-white">contextual guidance</span>{" "}
+                          during experiments, while existing AI tools rely mainly on
+                          text-driven interaction, encouraging{" "}
+                          <span className="font-semibold text-white">shortcut learning</span>{" "}
+                          and reducing opportunities for{" "}
+                          <span className="font-semibold text-white">deeper engagement</span>.
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </ScrollDimSection>
                 ) : section.id === "the-pivot" ? (
                   /* The Pivot：左侧文字 + 右侧 7 张图左右交替排列 */
                   <div className="flex flex-row items-start gap-8 md:gap-10">
@@ -829,136 +892,235 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
                     </div>
                   </div>
                 ) : section.id === "system-design" ? (
-                  /* System Design：标题+图滚动全屏动画 + 下面每块均为吸附模块 */
+                  /* System Design：复制 Touchstone 风格全屏图文 + 下方模块 */
                   <div className="flex flex-col gap-12 md:gap-16 overflow-visible">
-                    <SystemDesignHeader
-                      title={section.title}
-                      imageSrc="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_system.png"
-                      imageAlt={msg.systemDesign.structureAlt}
-                      onFullscreenChange={setIsStructureFullscreen}
-                    />
-                    {/* 每块：左侧无 max-height 随内容增高，右侧固定高度且 sticky；进入视口时滑显 */}
-                    {[0, 2, 4].map((startIdx) => (
-                      <motion.div
-                        key={startIdx}
-                        className={`flex flex-row items-start gap-8 md:gap-10 overflow-visible min-h-[100vh] ${
-                          startIdx === 0 ? "" : "mt-16 md:mt-24"
-                        }`}
-                        initial={{ opacity: 0, y: 16 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false, amount: 0.35 }}
-                        transition={{ duration: 0.85, ease: SECTION_REVEAL_EASE }}
-                      >
-                        <div className="min-w-0 flex-1 max-w-[50%] flex flex-col min-h-[80vh] overflow-visible">
-                            {startIdx === 0 ? (
-                              <>
-                                <h3 className="text-white text-3xl md:text-4xl font-semibold tracking-tight shrink-0">
-                                  {msg.systemDesign.blocks.interaction3d.title}
-                                </h3>
-                              <div className="hidden md:block flex-1 min-h-0" aria-hidden />
-                              <div className="text-white/80 text-base font-light md:text-lg leading-relaxed space-y-10 md:space-y-12 shrink-0 mt-4 sm:mt-6 md:mt-0">
-                                {msg.systemDesign.blocks.interaction3d.paragraphs.map((p, idx) => (
-                                  <p key={idx}>{p}</p>
-                                ))}
-                              </div>
-                            </>
-                            ) : startIdx === 2 ? (
-                              <>
-                                <h3 className="text-white text-3xl md:text-4xl font-semibold tracking-tight shrink-0">
-                                  {msg.systemDesign.blocks.freeChat.title}
-                                </h3>
-                                <div className="hidden md:block flex-1 min-h-0" aria-hidden />
-                                <div className="text-white/80 text-base font-light md:text-lg leading-relaxed space-y-10 md:space-y-12 shrink-0 mt-4 sm:mt-6 md:mt-0">
-                                  {msg.systemDesign.blocks.freeChat.paragraphs.map((p, idx) => (
-                                    <p key={idx}>{p}</p>
-                                  ))}
-                                </div>
-                              </>
-                            ) : startIdx === 4 ? (
-                              <>
-                                <h3 className="text-white text-3xl md:text-4xl font-semibold tracking-tight shrink-0">
-                                  {msg.systemDesign.blocks.longTermMemory.title}
-                                </h3>
-                                <div className="hidden md:block flex-1 min-h-0" aria-hidden />
-                                <div className="text-white/80 text-base font-light md:text-lg leading-relaxed space-y-10 md:space-y-12 shrink-0 mt-4 sm:mt-6 md:mt-0">
-                                  {msg.systemDesign.blocks.longTermMemory.paragraphs.map((p, idx) => (
-                                    <p key={idx}>{p}</p>
-                                  ))}
-                                </div>
-                              </>
-                            ) : (
-                            <div className="mt-auto text-white/80 text-base font-light md:text-lg leading-relaxed space-y-10 md:space-y-12">
-                              <p className="text-white/80">
-                                <span className="font-medium text-white">{section.paragraphs[startIdx]}</span>
-                                {section.paragraphs[startIdx + 1]}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                        {/* 右列铺满至内容区右边缘，与 header 右缘（pr-5）对齐；视频在列内右对齐 */}
-                        <div className="flex-1 min-w-0 flex flex-col items-end self-start h-screen sticky top-0">
-                          <SystemDesignVideo
-                            src={startIdx === 0 ? MOTION_VIDEO_URL : startIdx === 2 ? FREE_CHAT_VIDEO_URL : LONG_TERM_MEMORY_VIDEO_URL}
-                            isMuted={allVideosMuted}
-                            onMutedToggle={() => setAllVideosMuted((m) => !m)}
-                          />
-                        </div>
-                      </motion.div>
-                    ))}
+                    <ScrollDimSection className="relative h-screen -left-5 md:-left-[200px] min-[1350px]:-left-[272px] w-screen overflow-hidden">
+                      <img
+                        src={SYSTEM_HERO_IMAGE_URL}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover scale-[1.22] blur-md opacity-60"
+                        aria-hidden
+                      />
+                      <div className="absolute inset-0 bg-black/0" aria-hidden />
+                      <div className="relative z-10 h-screen flex flex-col items-center justify-center gap-10 px-6">
+                        <h2 className="text-white text-3xl md:text-4xl font-semibold tracking-tight text-center px-6">
+                          System Design
+                        </h2>
+                        <img
+                          src={SYSTEM_HERO_IMAGE_URL}
+                          alt={msg.systemDesign.structureAlt}
+                          className="w-[70vw] max-w-[1200px] h-auto object-contain rounded-2xl"
+                        />
+                      </div>
+                    </ScrollDimSection>
                   </div>
                 ) : section.id === "risk-safety" ? (
-                  /* Risk & Safety：与 The Pivot 同布局，左侧标题顶对齐、正文底对齐，右侧占位假装有图 */
-                  <div className="flex flex-row items-start gap-8 md:gap-10">
-                    <div className="min-w-0 flex-1 max-w-[50%] flex flex-col min-h-[90vh]">
-                      <AnimatedTitle className="text-white text-4xl md:text-5xl font-semibold tracking-tight mb-4 sm:mb-8 md:mb-12 lg:mb-20">
+                  /* Solution：整体 sticky，section 高度 200vh 提供滚动距离 */
+                  <div className="min-h-[200vh]">
+                    <div className="sticky top-0 min-h-screen flex flex-col justify-center">
+                      <AnimatedTitle className="text-white text-4xl md:text-5xl font-semibold tracking-tight mb-8 md:mb-10">
                         {section.title}
                       </AnimatedTitle>
-                      <AnimatedParagraphs
-                        paragraphs={section.paragraphs}
-                        containerClassName="mt-auto space-y-10 md:space-y-12"
-                        paraClassName="text-white/80 text-base font-light md:text-lg leading-relaxed"
-                      />
+                      <div className="flex flex-row items-center gap-4 sm:gap-6 md:gap-10 lg:gap-16">
+                    {/* 左侧图片组 */}
+                    <div className="flex flex-col shrink-0 w-[180px] sm:w-[220px] md:w-[260px] lg:w-[300px]">
+                      <div className="flex flex-col items-start gap-0">
+                        {/* 图1 */}
+                        <div className="flex flex-col items-center">
+                          <div className={`rounded-xl p-1 transition-all duration-500 ${solutionPhase === 0 ? "ring-2 ring-blue-400" : "opacity-40"}`}>
+                            <img src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_02.svg" alt="Solution step 1" className="h-24 md:h-28 w-auto object-contain" />
+                          </div>
+                          <svg width="10" height="32" viewBox="0 0 10 32" fill="none" aria-hidden className={`transition-opacity duration-500 ${solutionPhase === 0 ? "opacity-100" : "opacity-20"}`}>
+                            <line x1="5" y1="0" x2="5" y2="24" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                            <circle cx="5" cy="28" r="3.5" fill="white" />
+                          </svg>
+                        </div>
+                        {/* 图2 */}
+                        <div className="flex flex-col items-center">
+                          <div className={`rounded-xl p-1 transition-all duration-500 ${solutionPhase === 0 ? "ring-2 ring-blue-400" : "opacity-40"}`}>
+                            <img src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_02.svg" alt="Solution step 2" className="h-24 md:h-28 w-auto object-contain" />
+                          </div>
+                          <svg width="10" height="32" viewBox="0 0 10 32" fill="none" aria-hidden className="opacity-60">
+                            <line x1="5" y1="0" x2="5" y2="24" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                            <circle cx="5" cy="28" r="3.5" fill="white" />
+                          </svg>
+                        </div>
+                        {/* 图3 */}
+                        <div className="flex flex-col items-center">
+                          <div className={`rounded-xl p-1 transition-all duration-500 ${solutionPhase === 1 ? "ring-2 ring-blue-400" : "opacity-40"}`}>
+                            <img src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_03.svg" alt="Solution step 3" className="h-24 md:h-28 w-auto object-contain" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0 min-h-[90vh] sticky top-20 self-start max-w-[50vw]" aria-hidden />
+
+                    {/* 右侧，根据 phase 切换内容 */}
+                    <div className="flex-1 min-w-0 flex flex-col">
+                      <AnimatePresence mode="wait">
+                        {solutionPhase === 0 ? (
+                          <motion.video
+                            key="come-video"
+                            src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_come.mp4"
+                            autoPlay loop muted playsInline
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="w-full h-[56vh] rounded-2xl object-cover"
+                          />
+                        ) : (
+                          <motion.div
+                            key="phase1"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="w-full"
+                          >
+                            <AnimatePresence mode="wait">
+                              {solutionCarousel === 0 ? (
+                                <motion.video
+                                  key="ask-video"
+                                  src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_ask.mp4"
+                                  autoPlay muted playsInline
+                                  onEnded={() => setSolutionCarousel(1)}
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  transition={{ duration: 0.5 }}
+                                  className="w-full h-[56vh] rounded-2xl object-cover"
+                                />
+                              ) : (
+                                <motion.div
+                                  key="dogu-ui"
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  transition={{ duration: 0.5 }}
+                                  className="h-[56vh] rounded-2xl border border-white/20 backdrop-blur-md bg-white/10 p-4"
+                                >
+                                  <img
+                                    src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_UI.svg"
+                                    alt="Dogu UI"
+                                    className="w-full h-full object-contain"
+                                  />
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                            <div className="flex justify-center gap-2 mt-4">
+                              {[0, 1].map((i) => (
+                                <button
+                                  key={i}
+                                  onClick={() => setSolutionCarousel(i)}
+                                  className={`w-2 h-2 rounded-full transition-all duration-300 ${solutionCarousel === i ? "bg-white scale-125" : "bg-white/40"}`}
+                                  aria-label={`Switch to item ${i + 1}`}
+                                />
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      {/* 占位，避免 phase 0/1 切换时整体上下抖动 */}
+                      {solutionPhase === 0 && <div className="h-6 mt-4" aria-hidden />}
+                    </div>
+                      </div>
+                    </div>
                   </div>
                 ) : section.id === "results" ? (
-                  /* Results：标题 + 三项指标（数字从 0 递增），右侧占位假装有图 */
-                  <div className="flex flex-row items-start gap-8 md:gap-10">
+                  /* Hardware：标题位置不变；下方两张图随滚动切换 */
+                  <div className="flex flex-row items-start gap-8 md:gap-10 pt-24 md:pt-28">
                     <div
                       ref={resultsContentRef}
-                      className="min-w-0 flex-1 max-w-[50%] flex flex-col min-h-[90vh]"
+                      className="min-w-0 flex-1 flex flex-col min-h-[90vh]"
                     >
                       <AnimatedTitle className="text-white text-4xl md:text-5xl font-semibold tracking-tight mb-4 sm:mb-8 md:mb-12 lg:mb-20">
                         {section.title}
                       </AnimatedTitle>
-                      <div className="mt-auto flex flex-col gap-10 md:gap-12">
-                        <div className="flex items-baseline gap-6 md:gap-8">
-                          <span className="text-white text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight w-[7rem] sm:w-[8.5rem] md:w-[10rem] shrink-0">
-                            {resultVal1.toLocaleString()}+
-                          </span>
-                          <span className="text-white/80 text-base font-light md:text-lg">
-                            {msg.ui.results.payingUsersIn5Days}
-                          </span>
-                        </div>
-                        <div className="flex items-baseline gap-6 md:gap-8">
-                          <span className="text-white text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight w-[7rem] sm:w-[8.5rem] md:w-[10rem] shrink-0">
-                            {(resultVal2 / 100).toFixed(2)}M
-                          </span>
-                          <span className="text-white/80 text-base font-light md:text-lg">
-                            {msg.ui.results.firstWeekRevenue}
-                          </span>
-                        </div>
-                        <div className="flex items-baseline gap-6 md:gap-8">
-                          <span className="text-white text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight w-[7rem] sm:w-[8.5rem] md:w-[10rem] shrink-0">
-                            {resultVal3}%+
-                          </span>
-                          <span className="text-white/80 text-base font-light md:text-lg">
-                            {msg.ui.results.sevenDayRetention}
-                          </span>
+                      <div className="flex-1 min-h-0 flex items-center justify-center">
+                        <div className="w-full flex flex-col items-center">
+                          <div className="relative w-[72vw] max-w-[1080px] h-[56vh] max-h-[620px] min-h-[320px]">
+                            <motion.img
+                              src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_hardware1.svg"
+                              alt="Hardware 1"
+                              initial={false}
+                              animate={{
+                                opacity: hardwareCarousel === 0 ? 1 : 0,
+                                x: hardwareCarousel === 0 ? 0 : -30,
+                              }}
+                              transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
+                              className="absolute inset-0 w-full h-full object-contain"
+                            />
+                            <motion.img
+                              src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_hardware2.svg"
+                              alt="Hardware 2"
+                              initial={false}
+                              animate={{
+                                opacity: hardwareCarousel === 1 ? 1 : 0,
+                                x: hardwareCarousel === 1 ? 0 : 30,
+                              }}
+                              transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
+                              className="absolute inset-0 w-full h-full object-contain"
+                            />
+                          </div>
+                          <div className="mt-5 flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => setHardwareCarousel(0)}
+                              className={`h-2.5 w-2.5 rounded-full transition-all ${hardwareCarousel === 0 ? "bg-white scale-110" : "bg-white/40 hover:bg-white/70"}`}
+                              aria-label="Show hardware image 1"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setHardwareCarousel(1)}
+                              className={`h-2.5 w-2.5 rounded-full transition-all ${hardwareCarousel === 1 ? "bg-white scale-110" : "bg-white/40 hover:bg-white/70"}`}
+                              aria-label="Show hardware image 2"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className="flex-1 min-w-0 min-h-[90vh] sticky top-20 self-start max-w-[50vw]" aria-hidden />
+                  </div>
+                ) : section.id === "futures" ? (
+                  <div className="flex flex-row items-start gap-8 md:gap-10 pt-12 md:pt-16">
+                    <div className="min-w-0 flex-1 max-w-[60%] flex flex-col min-h-[90vh]">
+                      <AnimatedTitle className="text-white text-4xl md:text-5xl font-semibold tracking-tight">
+                        {section.title}
+                      </AnimatedTitle>
+                      <div className="mt-auto text-white/80 text-base font-light md:text-lg leading-relaxed space-y-10 md:space-y-12">
+                        <div>
+                          <p>Continuous Video-Based Perception</p>
+                          <p className="mt-3 text-white/80 text-base font-light md:text-lg leading-relaxed">
+                            Real-time environment understanding without manual photo uploads.
+                          </p>
+                        </div>
+                        <div>
+                          <p>
+                            <span className="text-sky-400 font-semibold">Instructor Analytics</span> Dashboard
+                          </p>
+                          <p className="mt-3 text-white/80 text-base font-light md:text-lg leading-relaxed">
+                            Aggregate student questions and generate exportable FAQ insights.
+                          </p>
+                        </div>
+                        <div>
+                          <p>
+                            Fully <span className="text-sky-400 font-semibold">Integrated</span> Robot Vision
+                          </p>
+                          <p className="mt-3 text-white/80 text-base font-light md:text-lg leading-relaxed">
+                            Use onboard high-resolution cameras to remove external hardware.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col gap-4 md:gap-6 h-[90vh] sticky top-20 self-start max-w-[40vw]">
+                      <div className="flex justify-end h-full">
+                        <img
+                          src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_future.jpg"
+                          alt=""
+                          className="h-full w-auto object-cover border border-white/0 block"
+                          aria-hidden
+                        />
+                      </div>
+                    </div>
                   </div>
                 ) : section.id === "reflection" ? (
                   /* Reflection：与 The Pivot 同布局，左侧标题+段落，右侧单图 sticky */
@@ -1018,12 +1180,19 @@ export default function DoguCaseStudyPage({ slug }: CaseStudyPageProps) {
           </article>
         </section>
 
-        {/* ========== 下一个 section：More Works；Tencent 项目页隐藏 ========== */}
-        {!(slug && decodeURIComponent(slug).toLowerCase().includes("tencent")) && (
-          <section ref={moreWorksSectionRef} id="case-study-more-works">
-            <MoreWorks />
-          </section>
-        )}
+        {/* ========== 下一个 section：More Works ========== */}
+        <section ref={moreWorksSectionRef} id="case-study-more-works">
+          <MoreWorks projects={[
+            {
+              title: "Tencent",
+              category: "Game & AI Product",
+              href: "/case-studies/Tencent%20-%20QQ%20Spend",
+              type: "image",
+              image: "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Tencent_Hero.png",
+            },
+            
+          ]} />
+        </section>
       </main>
       <Footer />
     </>

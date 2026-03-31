@@ -32,7 +32,7 @@ const titleBlock = {
   },
 };
 
-const numberText = "01";
+const numberText = "02";
 
 export default function DoguHero() {
   const imgRef = useRef<HTMLDivElement>(null);

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion, useInView, useScroll, useTransform } from "framer-motion";
-import Header from "../components/Header";
-import Hero from "../components/Hero";
-import SectionInfo from "../components/SectionInfo";
-import MoreWorks from "../components/MoreWorks";
-import Footer from "../components/Footer";
-import MenuOverlay from "../components/MenuOverlay";
-import { useLanguage } from "../i18n/LanguageContext";
-import { caseStudyMessages } from "../i18n/caseStudyMessages";
+import Header from "../../components/Header";
+import Hero from "./Hero";
+import SectionInfo from "./SectionInfo";
+import MoreWorks from "../../components/MoreWorks";
+import Footer from "../../components/Footer";
+import MenuOverlay from "../../components/MenuOverlay";
+import { useLanguage } from "../../i18n/LanguageContext";
+import { caseStudyMessages } from "./caseStudyMessages";
 
 const MOTION_VIDEO_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/move.mp4";
 const FREE_CHAT_VIDEO_URL = "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/free%20chat.mp4";
@@ -1049,12 +1049,18 @@ export default function CaseStudyPage({ slug }: CaseStudyPageProps) {
           </article>
         </section>
 
-        {/* ========== 下一个 section：More Works；Tencent 项目页隐藏 ========== */}
-        {!(slug && decodeURIComponent(slug).toLowerCase().includes("tencent")) && (
-          <section ref={moreWorksSectionRef} id="case-study-more-works">
-            <MoreWorks />
-          </section>
-        )}
+        {/* ========== 下一个 section：More Works ========== */}
+        <section ref={moreWorksSectionRef} id="case-study-more-works">
+          <MoreWorks projects={[
+            {
+              title: "DOGU",
+              category: "Robotics & AI",
+              href: "/case-studies/DOGU%20-%20IROI",
+              type: "image",
+              image: "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Dogu_future.jpg",
+            },
+          ]} />
+        </section>
       </main>
       <Footer />
     </>

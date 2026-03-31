@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Lang } from "./LanguageContext";
+import type { Lang } from "../../i18n/LanguageContext";
 
 export type CaseSection = {
   id: string;
@@ -55,15 +55,12 @@ export type CaseStudyMessages = {
   };
 };
 
-export const caseStudyMessages: Record<Lang, CaseStudyMessages> = {
+export const doguCaseStudyMessages: Record<Lang, CaseStudyMessages> = {
   en: {
     toc: [
-      { id: "research", label: "Research" },
-      { id: "the-pivot", label: "The Pivot" },
-      { id: "system-design", label: "AI System" },
-      { id: "risk-safety", label: "Risk & Safety" },
-      { id: "results", label: "Results" },
-      { id: "reflection", label: "Reflection" },
+      { id: "risk-safety", label: "Solution" },
+      { id: "results", label: "Hardware" },
+      { id: "futures", label: "Future" },
     ],
     sections: [
       {
@@ -71,94 +68,37 @@ export const caseStudyMessages: Record<Lang, CaseStudyMessages> = {
         title: "Overview",
         paragraphs: [
           <>
-            <span className="font-bold text-white">Miracle</span> is an{" "}
-            <span className="font-medium">AI companion agent</span> in QQ Speed,
-            always waiting for you when you come back.
-          </>,
-          <>QQ Speed is a mobile racing game with strong competitive gameplay.</>,
-          <>
-            We introduced Miracle to test whether{" "}
-            <span className="font-medium">emotional companionship</span> could
-            become a new retention and growth driver.
+            <span className="font-bold text-white">IROI</span> is a robot teaching assistant that helps students with Sensors
+            and Circuits problems and reminds them of important steps and
+            mistakes. When you raise your hand, IROI will come to you and help
+            right away, so you do not need to wait for a TA anymore.
           </>,
           <>
-            <span className="font-bold text-white">My Role</span> was to lead
-            product strategy and AI system design.
+            <span className="font-bold text-white">My role</span> is Robotics
+            Engineer & AI Engineer.
           </>,
         ],
       },
       {
         id: "research",
-        title: "Research",
+        title: "Touchstone",
         paragraphs: [
           <>
-            <span className="font-bold text-white">The problem</span> was that
-            QQ Speed struggled to extend user engagement.
-          </>,
-          <>
-            Many players logged in, finished their daily tasks, and exited
-            immediately. As a result, long-term retention remained limited, and
-            growth in cosmetic purchases began to slow.
-          </>,
-          <>
-            QQ Speed proposed building an{" "}
-            <span className="font-medium">AI skill-enhancement tool</span> to
-            help players improve performance and stay longer in the game.
-          </>,
-        ],
-      },
-      {
-        id: "the-pivot",
-        title: "The Pivot",
-        paragraphs: [
-          <>
-            <span className="font-bold text-white">We decided</span> to explore
-            the AI companion market and assess user willingness.
-          </>,
-          <>
-            <span className="font-bold text-white">
-              From competitor analysis,
-            </span>{" "}
-            we found that while the AI companion market attracts strong user
-            interest, most existing products are limited to Q&A interactions
-            rather than true emotional companionship. This revealed an
-            opportunity to build a more persistent and relationship-driven
-            experience.
-          </>,
-          <>
-            <span className="font-bold text-white">
-              To explore this direction,
-            </span>{" "}
-            we conducted a second large-scale survey and interviews to better
-            understand user expectations and payment willingness for an AI
-            companion product.
-          </>,
-          <>
-            <span className="font-bold text-white">
-              The second research confirmed
-            </span>{" "}
-            that users were not only looking for functional support, but also
-            emotional interaction and personalization. High-paying users valued
-            both performance feedback and emotional connection, while emotional
-            engagement consistently ranked as a top priority across segments.
-            These findings reinforced that a companionship-driven product had
-            stronger long-term retention and monetization potential than a
-            purely skill-based tool.
-          </>,
-          <>
-            <span className="font-bold text-white">We pivoted</span> to an AI
-            companionship model focused on emotional engagement.
+            In hands-on lab learning, students often lack timely, contextual
+            guidance during experiments, while existing AI tools rely mainly on
+            text-driven interaction, encouraging shortcut learning and reducing
+            opportunities for deeper engagement.
           </>,
         ],
       },
       {
         id: "system-design",
-        title: "AI System",
+        title: "Future",
         paragraphs: [],
       },
       {
         id: "risk-safety",
-        title: "Risk & Safety",
+        title: "Solution",
         paragraphs: [
           "To ensure Miracle's stable operation in a large-scale game environment, we designed a multi-layer risk control framework covering content safety, hallucination mitigation, and system stability.",
           "At the prompt level, topic boundaries and behavioral constraints are enforced to prevent out-of-scope interactions and non-compliant content, ensuring the companion relationship remains within defined limits.",
@@ -168,33 +108,32 @@ export const caseStudyMessages: Record<Lang, CaseStudyMessages> = {
       },
       {
         id: "results",
-        title: "Results",
+        title: "Hardware",
         paragraphs: [
           "After launch we saw a clear lift in return rate and session length. Players who engaged with the companion came back more often and stayed longer.",
           'Qualitative feedback highlighted that users felt "seen" by the AI—the memory and continuity made the difference.',
         ],
       },
       {
-        id: "reflection",
-        title: "Reflection",
+        id: "futures",
+        title: "Futures",
         paragraphs: [
-          "This project reinforced my belief that AI product success is not defined by model capability alone, but by whether it truly solves user needs and drives sustainable business growth.",
-          "I also learned that safety and stability must be embedded throughout the development process, supported by continuous testing and iteration.",
-          "If redesigning the system, I would still prioritize defining what to build and why now before focusing on technical execution. Clear problem definition and value assessment are essential to aligning AI capability with real user and business impact.",
+          "Next, we plan to expand IROI with richer multimodal sensing and more proactive classroom support.",
+          "This section is a placeholder for upcoming roadmap details, pilot outcomes, and deployment milestones.",
         ],
       },
     ],
     overviewSkills: [
-      "Product Strategy",
-      "System Design",
-      "User Research",
-      "Competitive Analysis",
+      "Robotics (ROS)",
+      "Perception (YOLO)",
+      "Navigation & Mapping",
+      "Multimodal AI",
+      "LLM + RAG",
       "Prompt Engineering",
-      "Data Strategy",
+      "System Architecture",
       "Evaluation",
-      "Problem Define",
-      "Model Selection",
-      "Risk Control",
+      "Deployment",
+      "Human-Robot Interaction",
     ],
     ui: {
       scrollToContinue: "Scroll to Continue",
@@ -237,7 +176,7 @@ export const caseStudyMessages: Record<Lang, CaseStudyMessages> = {
       },
     },
     meta: {
-      defaultDocumentTitle: "Tencent - Miracle",
+      defaultDocumentTitle: "DOGU - IROI",
       siteSuffix: "SHAO Linzhengrong",
     },
     systemDesign: {
@@ -323,12 +262,9 @@ export const caseStudyMessages: Record<Lang, CaseStudyMessages> = {
   },
   zh: {
     toc: [
-      { id: "research", label: "用户调研" },
-      { id: "the-pivot", label: "产品转向" },
-      { id: "system-design", label: "系统设计" },
-      { id: "risk-safety", label: "风险与安全" },
-      { id: "results", label: "结果" },
-      { id: "reflection", label: "反思" },
+      { id: "risk-safety", label: "Solution" },
+      { id: "results", label: "Hardware" },
+      { id: "futures", label: "Future" },
     ],
     sections: [
       {
@@ -366,34 +302,13 @@ export const caseStudyMessages: Record<Lang, CaseStudyMessages> = {
         ],
       },
       {
-        id: "the-pivot",
-        title: "产品转向",
-        paragraphs: [
-          <>
-            <span className="font-bold text-white">我们决定</span>探索 AI 陪伴市场，并评估用户接受度与付费意愿。
-          </>,
-          <>
-            <span className="font-bold text-white">通过竞品分析</span>我们发现，尽管AI陪伴市场热度高，但多数产品仍停留在问答式互动，缺少真正的情感陪伴。这意味着可以打造更“持续关系”的体验空间。
-          </>,
-          <>
-            <span className="font-bold text-white">为进一步验证方向</span>，我们开展了第二轮大规模问卷与访谈，以更深入理解用户期待与付费意愿。
-          </>,
-          <>
-            <span className="font-bold text-white">第二轮研究确认</span>用户不仅需要功能支持，更重视情感互动与个性化。高付费用户同时看重表现反馈与情感连接，而情感参与在各类人群中始终位列高优先级。这些发现进一步证明：相比纯技能工具，陪伴驱动的产品在长期留存与商业化上更具潜力。
-          </>,
-          <>
-            <span className="font-bold text-white">因此我们转向</span>以情感陪伴为核心的 AI 陪伴模型。
-          </>,
-        ],
-      },
-      {
         id: "system-design",
-        title: "系统设计",
+        title: "Future",
         paragraphs: [],
       },
       {
         id: "risk-safety",
-        title: "风险与安全",
+        title: "Solution",
         paragraphs: [
           "为了保障米拉在大型游戏环境中的稳定运行，我们设计了覆盖内容安全、幻觉缓解与系统稳定性的多层风控框架。",
           "在Prompt层面，通过话题边界与行为约束防止越界互动与不合规内容，确保陪伴关系在可控范围内。",
@@ -403,34 +318,32 @@ export const caseStudyMessages: Record<Lang, CaseStudyMessages> = {
       },
       {
         id: "results",
-        title: "结果",
+        title: "Hardware",
         paragraphs: [
           "上线后，回访率与单次时长都有明显提升。与陪伴系统互动的玩家回流更频繁、停留更久。",
           "定性反馈显示，用户会觉得 AI “记得我、理解我”——记忆与连续性是关键差异点。",
         ],
       },
       {
-        id: "reflection",
-        title: "复盘",
+        id: "futures",
+        title: "Futures",
         paragraphs: [
-          "这个项目进一步强化了我的认知：AI 产品的成功不只取决于模型能力，更取决于是否真正解决用户需求，并推动可持续的业务增长。",
-          "同时我也学到，安全与稳定必须贯穿开发全流程，需要持续测试与迭代作为支撑。",
-          "如果重新设计系统，我依然会先明确“做什么”和“为什么现在做”，再进入技术实现。清晰的问题定义与价值评估，是让 AI 能力对齐真实用户与业务影响的关键。",
-          "我真的很喜欢在这栋楼里看每一次日落，在那一刻，天空像一首诗，时间也被温柔地按下了暂停键。",
+          "下一步我们计划为 IROI 增加更丰富的多模态感知与更主动的课堂支持能力。",
+          "这里先作为占位内容，后续会补充路线图、试点结果与部署里程碑。",
         ],
       },
     ],
     overviewSkills: [
-      "产品策略",
-      "系统设计",
-      "用户研究",
-      "竞品分析",
-      "Prompt 工程",
-      "数据策略",
-      "评估",
-      "问题定义",
-      "模型选型",
-      "风险控制",
+      "Robotics (ROS)",
+      "Perception (YOLO)",
+      "Navigation & Mapping",
+      "Multimodal AI",
+      "LLM + RAG",
+      "Prompt Engineering",
+      "System Architecture",
+      "Evaluation",
+      "Deployment",
+      "Human-Robot Interaction",
     ],
     ui: {
       scrollToContinue: "继续向下滚动",
@@ -468,7 +381,7 @@ export const caseStudyMessages: Record<Lang, CaseStudyMessages> = {
       },
     },
     meta: {
-      defaultDocumentTitle: "腾讯 - Miracle",
+      defaultDocumentTitle: "DOGU - IROI",
       siteSuffix: "SHAO Linzhengrong",
     },
     systemDesign: {

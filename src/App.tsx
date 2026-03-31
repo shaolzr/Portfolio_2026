@@ -1,9 +1,10 @@
 import { BrowserRouter, useLocation, matchPath, Routes, Route } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import HomePage from "./pages/HomePage";
-import CaseStudyPage from "./pages/CaseStudyPage";
-import DoguComingSoonPage from "./pages/DoguComingSoonPage";
+import CaseStudyPage from "./features/tencent/CaseStudyPage";
+import DoguCaseStudyPage from "./features/dogu/DoguCaseStudyPage";
 import AboutPage from "./pages/AboutPage";
+import WorksPage from "./pages/WorksPage";
 import { LanguageProvider } from "./i18n/LanguageContext";
 import { useLenis } from "./lib/useLenis";
 
@@ -35,8 +36,10 @@ function AnimatedRoutes() {
       ? <HomePage />
       : basePath === "/about"
       ? <AboutPage />
+      : basePath === "/works"
+      ? <WorksPage />
       : caseMatch
-      ? (isDoguCase ? <DoguComingSoonPage /> : <CaseStudyPage slug={slug} />)
+      ? (isDoguCase ? <DoguCaseStudyPage slug={slug} /> : <CaseStudyPage slug={slug} />)
       : null;
 
   return (

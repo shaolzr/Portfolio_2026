@@ -3,4 +3,6 @@ dist
 .DS_Store
 *.log
 tsconfig.tsbuildinfo
+vite.config.d.ts
+vite.config.js.timestamp-*.mjs
 pic/

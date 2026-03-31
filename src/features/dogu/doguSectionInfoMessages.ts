@@ -1,6 +1,6 @@
-import type { Lang } from "./LanguageContext";
+import type { Lang } from "../../i18n/LanguageContext";
 
-export const sectionInfoMessages: Record<
+export const doguSectionInfoMessages: Record<
   Lang,
   {
     labels: { client: string; type: string; year: string; about: string };
@@ -10,11 +10,11 @@ export const sectionInfoMessages: Record<
   en: {
     labels: { client: "Client", type: "Type", year: "Year", about: "About" },
     values: {
-      client: "QQ SPEED Players",
-      type: "Game, AI Agent, AI Product",
-      year: "2025",
+      client: "DOGU",
+      type: "Robotics, AI Agent, AI Product",
+      year: "2025-2026",
       about:
-        "Miracle is an AI companion system built for QQ Speed. It creates memory-based interactions that grow with each player over time. The system responds to in-game performance, reinforces emotional feedback, and learns long-term user preferences. Instead of focusing only on transactional gameplay, it builds ongoing relationships and turns relationship-driven retention into a new growth engine.",
+        "Iroi is a multimodal robot assistant designed to support hands-on lab learning through real-time, contextual guidance. Instead of providing direct answers, it enables step-by-step learning using speech and image understanding grounded in course materials. By combining robotics and AI, Iroi helps students stay engaged and reduces reliance on shortcut-based learning.",
     },
   },
   zh: {
@@ -28,4 +28,3 @@ export const sectionInfoMessages: Record<
     },
   },
 };
-

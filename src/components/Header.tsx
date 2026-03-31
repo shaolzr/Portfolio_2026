@@ -20,9 +20,8 @@ export default function Header({
   const { lang } = useLanguage();
   const msg = homeMessages[lang];
   const prefix = lang === "zh" ? "/zh" : "";
-  const tencentCasePath = `${prefix}/case-studies/${encodeURIComponent("Tencent - QQ Spend")}`;
   const menuLinks = [
-    { label: msg.menu.works, to: tencentCasePath },
+    { label: msg.menu.works, to: `${prefix}/works` },
     { label: msg.menu.about, to: `${prefix}/about` },
     { label: msg.menu.contact, to: "mailto:shaolzr@gmail.com" },
   ];

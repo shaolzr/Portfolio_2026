@@ -1,8 +1,6 @@
 import { useLanguage } from "../i18n/LanguageContext";
 import { homeMessages } from "../i18n/homeMessages";
 
-const TENCENT_CASE_SLUG = "Tencent - QQ Spend";
-
 const social = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/shaolzr" },
 ];
@@ -12,14 +10,14 @@ export default function Footer() {
   const msg = homeMessages[lang];
   const prefix = lang === "zh" ? "/zh" : "";
   const sitemapHrefs = [
-    { key: "works" as const, href: `${prefix}/case-studies/${encodeURIComponent(TENCENT_CASE_SLUG)}` },
+    { key: "works" as const, href: `${prefix}/works` },
     { key: "about" as const, href: `${prefix}/about#experience` },
     { key: "contact" as const, href: "mailto:shaolzr@gmail.com" },
   ];
   const sitemap = sitemapHrefs.map(({ key, href }) => ({ label: msg.footer[key], href }));
 
   return (
-    <footer className="bg-black flex flex-col min-h-[400px] md:min-h-[400px] mt-12 md:mt-16">
+    <footer className="bg-black flex flex-col min-h-[450px] md:min-h-[450px] mt-12 md:mt-16">
       <div className="mx-5 md:mx-5 border-t border-white/20 shrink-0" aria-hidden />
       <div className="flex-1 flex flex-col px-5 md:px-5 pt-5 md:pt-5">
         <div className="flex flex-col gap-12 md:gap-20 min-[1350px]:grid min-[1350px]:grid-cols-[800px_1fr] min-[1350px]:gap-x-0 min-[1350px]:gap-y-12">
