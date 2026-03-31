@@ -9,7 +9,7 @@ const projects = [
     title: "Tencent",
     category: "AI Product Manager",
     year: "2025",
-    image: "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Tencent_Hero.png",
+    image: "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Tencent_01.png",
     imagePosition: "50% 5%",
     type: "image",
   },

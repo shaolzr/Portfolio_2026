@@ -73,7 +73,7 @@ export default function Hero() {
       </div>
       <div ref={imgRef} className="w-full aspect-[4/3] md:aspect-[2/1] lg:min-h-[80vh] relative overflow-hidden">
         <motion.img
-          src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Tencent_Hero.png"
+          src="https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Tencent_01.png"
           alt="Tencent"
           loading="eager"
           style={{ y: imgY }}

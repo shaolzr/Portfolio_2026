@@ -28,6 +28,7 @@ export const aboutMessages: Record<
       titleLine2: string;
       p1: string;
       p2: string;
+      p3: string;
       emailLink: string;
       linkedinLink: string;
     };
@@ -48,8 +49,9 @@ export const aboutMessages: Record<
     aboutBlock: {
       titleLine1: "AI Product Manager",
       titleLine2: "& Robotics Engineer",
-      p1: "I bridge the gap between cutting-edge AI capability and real human needs — turning research insights into products that people genuinely feel.",
-      p2: "My work spans AI companion systems, academic agents, and data platforms, always anchored in rigorous user research and business impact.",
+      p1: "Hi, I am a product builder working across AI and robotics, bridging cutting-edge capabilities with real human needs.",
+      p2: "I turn research insights into products that people genuinely connect with, leading end-to-end development from user research to launch.",
+      p3: "My work includes an AI companion system at Tencent and a robotics-powered teaching assistant, with a focus on user insight, system design, and measurable business impact.",
       emailLink: "Email ↗",
       linkedinLink: "LinkedIn ↗",
     },
@@ -60,8 +62,18 @@ export const aboutMessages: Record<
     },
     experiences: [
       {
+        company: "DOGU",
+        role: "AI & Robotics Engineer",
+        period: "Sep 2025 – Mar 2026",
+        location: "Bellevue, USA",
+        bullets: [
+          "Built a robotics-powered AI teaching assistant (DOGU), integrating perception, navigation, and LLM reasoning for real-time, context-aware guidance.",
+          "Designed a RAG system with structured prompting to deliver accurate, step-by-step support grounded in course knowledge.",
+        ],
+      },
+      {
         company: "Tencent",
-        role: "AI Product Manager Intern",
+        role: "AI Product Manager",
         period: "Jun 2025 – Sep 2025",
         location: "Shenzhen, China",
         bullets: [
@@ -70,32 +82,33 @@ export const aboutMessages: Record<
         ],
       },
       {
-        company: "AI Company · Academic Agent Project",
+        company: "Academic Agent",
         role: "AI Product Manager",
         period: "Jul 2023 – Jul 2024",
         location: "China",
         bullets: [
           "Owned the product lifecycle of an Academic Agent chatbot serving university students.",
-          "Grew DAU by 30%+ and achieved 50% user satisfaction improvement through iterative product releases.",
+          "Achieved strong early traction with 6 professors onboarded, 83% paid conversion, and 300K+ RMB revenue, validating product-market fit.",
         ],
       },
       {
-        company: "BigData & UX Platform",
+        company: "China Construction Bank Fintech",
         role: "Product Manager",
         period: "Mar 2022 – Sep 2024",
         location: "China",
         bullets: [
-          "Defined and executed product roadmaps across big-data and UX analytics platforms.",
-          "Led user research and translated insights into feature requirements and prioritisation frameworks.",
+          "Reduced outsourcing costs by ~28% and saved hours of manual work by launching an internal project management platform.",
+          "Cut reimbursement time from days to minutes for a large employee base, significantly improving operational efficiency.",
         ],
       },
     ],
     education: [
-      { school: "University of Washington · US News Rank #7", degree: "Engineering", field: "Robotics", period: "Sep 2024 – Apr 2026", gpa: "3.9 / 4.0" },
-      { school: "University of St Andrews · QS Rank #96", degree: "Computer Science", field: "Human Computer Interaction", period: "Sep 2020 – Nov 2021", gpa: "16.6 / 20.0" },
+      { school: "University of Washington", degree: "Engineering", field: "Robotics", period: "Sep 2024 – Apr 2026", gpa: "3.9 / 4.0" },
+      { school: "University of St Andrews", degree: "Computer Science", field: "Human Computer Interaction", period: "Sep 2020 – Nov 2021", gpa: "16.6 / 20.0" },
       { school: "Soochow University", degree: "Science", field: "Psychology", period: "Sep 2015 – Jul 2019", gpa: "3.7 / 4.0" },
     ],
     skills: [
+      { category: "Robotics", items: ["ROS / ROS2", "Multimodal interaction", "Computer Vision", "RAG Integration", "Human-Robot Interaction", "Robotics System Design"] },
       { category: "Product", items: ["Product Strategy", "System Design", "User Research", "Competitive Analysis", "Roadmapping", "Data Strategy", "Problem Definition", "Evaluation"] },
       { category: "AI & Engineering", items: ["Prompt Engineering", "RAG", "Model Selection", "Risk Control", "Python", "JavaScript", "SQL", "Vibe-coding"] },
       { category: "Design & Tools", items: ["Figma", "Sketch", "Axure", "Tableau", "Adobe Suite"] },
@@ -114,6 +127,7 @@ export const aboutMessages: Record<
       titleLine2: "& 机器人工程师",
       p1: "将前沿 AI 能力与真实用户需求结合，将研究洞察转化为人们真正有需要的产品",
       p2: "工作涵盖 AI 陪伴系统、学术智能体与数据平台",
+      p3: "我的项目包括腾讯 AI 陪伴系统和机器人教学助手，专注于用户洞察、系统设计与可量化的商业影响",
       emailLink: "邮箱 ↗",
       linkedinLink: "LinkedIn ↗",
     },

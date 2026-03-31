@@ -12,7 +12,7 @@ const projects = [
     category: "Robotics & AI",
     year: "2025",
     href: "/case-studies/Tencent%20-%20QQ%20Spend",
-    image: "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Tencent_Hero.png",
+    image: "https://pub-9285c469b2704f748f528c81e977b846.r2.dev/Tencent_01.png",
   },
   {
     index: "02",
@@ -122,12 +122,6 @@ export default function WorksPage() {
                         scale: hoveredIndex === i ? 1.04 : 1,
                       }}
                       transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    />
-                    {/* Dim overlay on hover */}
-                    <motion.div
-                      className="absolute inset-0 bg-black pointer-events-none"
-                      animate={{ opacity: hoveredIndex === i ? 0.25 : 0 }}
-                      transition={{ duration: 0.35 }}
                     />
                   </div>
 

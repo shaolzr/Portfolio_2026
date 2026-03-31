@@ -53,6 +53,9 @@ export default function SectionResume() {
             <p className="text-white/65 text-base leading-relaxed">
               {msg.aboutBlock.p2}
             </p>
+            <p className="text-white/65 text-base leading-relaxed">
+              {msg.aboutBlock.p3}
+            </p>
             <div className="flex gap-4 mt-2">
               <a
                 href="mailto:shaolzr@gmail.com"
@@ -87,7 +90,7 @@ export default function SectionResume() {
               transition={{ duration: 0.55, delay: i * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <Line />
-              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 py-10">
+              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-32 py-10">
                 <div className="flex flex-col gap-1">
                   <span className="text-white font-semibold text-sm">{exp.company}</span>
                   <span className="text-white/45 text-xs mt-1">{exp.period}</span>
@@ -124,7 +127,7 @@ export default function SectionResume() {
               transition={{ duration: 0.55, delay: i * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <Line />
-              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 py-8">
+              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-32 py-8">
                 <div className="flex flex-col gap-1">
                   <span className="text-white/45 text-xs">{edu.period}</span>
                   <span className="text-white/35 text-xs mt-1">{msg.labels.gpa} {edu.gpa}</span>
@@ -154,7 +157,7 @@ export default function SectionResume() {
               transition={{ duration: 0.55, delay: i * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <Line />
-              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 py-8">
+              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-32 py-8">
                 <span className="text-white/45 text-sm">{category}</span>
                 <div className="flex flex-wrap gap-2">
                   {items.map((skill) => (
